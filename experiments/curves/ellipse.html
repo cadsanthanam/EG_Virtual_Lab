@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Focus–Directrix Conic (Partial Arcs, Every 20th Line)</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            background: #333;
+            color: #fff;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .controls label {
+            font-size: 0.9rem;
+        }
+
+        .controls input {
+            width: 60px;
+            padding: 3px;
+        }
+
+        .controls button {
+            padding: 4px 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        #zoomControls button {
+            width: 30px;
+        }
+
+        /* Step box is placed BELOW header, ABOVE the canvas */
+        .stepBox {
+            background: #fefefe;
+            border: 1px solid #ddd;
+            margin: 5px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .stepBox .title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        #stepText {
+            margin-left: 10px;
+            line-height: 1.4;
+        }
+
+        .main {
+            width: 100%;
+            height: 80vh;
+            position: relative;
+            background: #fafafa;
+        }
+
+        #myCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <div class="header">
+        <h1>Focus–Directrix Conic (Partial Arcs, Every 20th Line)</h1>
+        <div class="controls">
+            <label>FocusDist:</label>
+            <input type="number" id="focusDist" value="80" step="5" />
+            <label>Ecc(e):</label>
+            <input type="text" id="eccInput" value="3/5" />
+            <button id="prevBtn">Prev</button>
+            <button id="nextBtn">Next</button>
+            <button id="resetBtn">Reset</button>
+            <div id="zoomControls">
+                <button id="zoomOutBtn">-</button>
+                <button id="zoomInBtn">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Step Instruction Box (Now on TOP) ===== -->
+    <div class="stepBox">
+        <div class="title">Step Explanation:</div>
+        <div id="stepText"></div>
+    </div>
+
+    <!-- ===== MAIN (canvas) ===== -->
+    <div class="main">
+        <canvas id="myCanvas"></canvas>
+    </div>
+
+    <script>
+        /**
+         * Minimal changes from original:
+         *  - Lines spaced at 0.5 mm, highlight every 20th line.
+         *  - Step box now above the canvas.
+         *  - Dimension line arrowheads at 0.08 * dimension length.
+         */
+
+        let step = 0;
+        const totalSteps = 11;
+
+        let focusDist = 80;
+        let e = 0.6; // default => 3/5
+
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+        let W = 0, H = 0;
+        let scaleFactor = 2.5; // can adjust
+
+        let A = { x: 0, y: 0 }, Fpt = { x: 80, y: 0 };
+        let V = { x: 0, y: 0 }, Vp = { x: 0, y: 0 };
+        let maxLines = 300; // if e<1 => 300, else 150
+
+        let lineData = [];
+
+        const stepTexts = [
+            "Click ‘Next’ to begin.",
+            "1) Draw directrix (DD') in blue.",
+            "2) Draw axis line from A (on directrix) ~250mm.",
+            "3) Mark F so that AF=FocusDist. Dimension AF.",
+            "4) Mark V with ratio VF/AV=e. Dimension if needed.",
+            "5) Draw V->V' (vertical). Extend A->V' ~250mm.",
+            "6) Make ~300 vertical lines (0.5mm) from V, 2mm beyond slant line. White color except every 20th => lightblue, labeled A–A', B–B', etc.",
+            "7) For each line n->n', measure length => arcs from F in background color. Except for 20th lines => arcs in darkyellow. Points labeled n\" or n~ in yellow.",
+            "8) Repeat for all lines. If no arc intersection => skip.",
+            "9) Join above-axis points V->1\"->2\"->... in black lines. Then below-axis V->1~->2~->... . If e<1 => we can close it, else open.",
+            "10) Final result is conic with partial arcs only on 20th lines. Press Next to see final.",
+            "11) Done. Press Reset to start again."
+        ];
+
+        function parseInputs() {
+            let fdVal = parseFloat(document.getElementById("focusDist").value);
+            if (!isNaN(fdVal) && fdVal > 0) focusDist = fdVal;
+
+            let eVal = document.getElementById("eccInput").value.trim();
+            if (eVal.includes("/")) {
+                let parts = eVal.split("/");
+                if (parts.length === 2) {
+                    let num = parseFloat(parts[0]);
+                    let den = parseFloat(parts[1]);
+                    if (!isNaN(num) && !isNaN(den) && den !== 0) e = num / den;
+                }
+            } else {
+                let val = parseFloat(eVal);
+                if (!isNaN(val) && val > 0) e = val;
+            }
+            // Add this after parsing e value
+            if (e > 0.8 && e < 1) {
+                alert("Eccentricity between 0.8 and 1 causes curves beyond canvas limits.\nDefaulting eccentricity to 0.85.");
+                e = 0.85;
+            }
+
+            if (e < 1) {
+                maxLines = 1800; // ellipse
+            } else {
+                maxLines = 300; // parabola or hyperbola
+            }
+            //  if (e < 1) { maxLines = 300; } else { maxLines = 150; }
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, W, H);
+            ctx.save();
+            let xShift = 0.1 * W;
+            let yShift = H / 2;
+            ctx.translate(xShift, yShift);
+            ctx.scale(scaleFactor, -scaleFactor);
+        }
+
+        function restoreCanvas() {
+            ctx.restore();
+        }
+
+        function drawLine(x1, y1, x2, y2, color = "#000", lw = 1, dash = []) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.setLineDash(dash);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lw / scaleFactor;
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawPoint(x, y, label = "", color = "blue") {
+            ctx.save();
+            let r = 3 / scaleFactor;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, 2 * Math.PI);
+            ctx.fill();
+            if (label) {
+                ctx.scale(1, -1);
+                ctx.fillStyle = "#000";
+                ctx.font = (12 / scaleFactor) + "px sans-serif";
+                ctx.fillText(label, x, -y - (8 / scaleFactor));
+            }
+            ctx.restore();
+        }
+
+        /** dimension line for AF => arrowheads at 0.08 * dimension length */
+        function drawDimensionAF() {
+            let yDim = -15;
+            // extension lines
+            drawLine(0, 0, 0, yDim, "#000", 1);
+            drawLine(focusDist, 0, focusDist, yDim, "#000", 1);
+            // dimension line
+            drawLine(0, yDim, focusDist, yDim, "#000", 1);
+            // arrow heads
+            drawDimensionArrows(0, yDim, focusDist, yDim, focusDist);
+
+            // label center
+            let mid = focusDist / 2;
+            drawDimLabel(mid, yDim, focusDist + " mm");
+        }
+        function drawDimensionArrows(x1, y1, x2, y2, dimVal) {
+            let dx = x2 - x1, dy = y2 - y1;
+            let dist = Math.sqrt(dx * dx + dy * dy);
+            let arrowLen = dist * 0.08; // 8% of dimension length
+            // but in scaled coords => let's do arrowLen= arrowLen / scaleFactor if we want direct.
+            // We'll do arrowLen in local coords though.
+            let halfW = arrowLen * 0.3; // thickness
+            function drawOneArrow(ax, ay, bx, by) {
+                let angle = Math.atan2(by - ay, bx - ax);
+                ctx.save();
+                ctx.beginPath();
+                ctx.fillStyle = "#000";
+                ctx.moveTo(bx, by);
+                ctx.lineTo(bx - arrowLen * Math.cos(angle) - halfW * Math.sin(angle),
+                    by - arrowLen * Math.sin(angle) + halfW * Math.cos(angle));
+                ctx.lineTo(bx - arrowLen * Math.cos(angle) + halfW * Math.sin(angle),
+                    by - arrowLen * Math.sin(angle) - halfW * Math.cos(angle));
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+            // draw arrow at x1,y1
+            drawOneArrow(x2, y2, x1, y1);
+            // arrow at x2,y2
+            drawOneArrow(x1, y1, x2, y2);
+        }
+        function drawDimLabel(x, y, text) {
+            ctx.save();
+            ctx.scale(1, -1);
+            ctx.fillStyle = "#000";
+            ctx.font = (12 / scaleFactor) + "px sans-serif";
+            let tw = ctx.measureText(text).width;
+            ctx.fillText(text, x - (tw / 2), -(y - 10)); // place 10 px below
+            ctx.restore();
+        }
+
+        function computeV() {
+            let xV = focusDist / (1 + e);
+            return { x: xV, y: 0 };
+        }
+        function computeVp() {
+            let len = focusDist - V.x;
+            return { x: V.x, y: len };
+        }
+
+        function defineLines() {
+            lineData = [];
+            let letterCount = 0;
+            for (let i = 1; i <= maxLines; i++) {
+                // spacing= 0.5 mm
+                let xVal = V.x + i * 0.5;
+                let t = (Math.abs(Vp.x) > 1e-9) ? xVal / Vp.x : 0;
+                let yVal = t * Vp.y;
+                let yMin = (yVal >= 0) ? -80 : yVal - 2;
+                let yMax = (yVal >= 0) ? yVal + 2 : 80;
+
+                // highlight every 20th line
+                let is10th = (i % 20 === 0);
+                let color = "#fff";
+                let axisLabel = "", slantLabel = "";
+                if (is10th) {
+                    color = "lightblue";
+                    let letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                    let letterIndex = letterCount;
+                    if (letterIndex < letters.length) {
+                        let letter = letters[letterIndex];
+                        axisLabel = letter;
+                        slantLabel = letter + "'";
+                    } else {
+                        axisLabel = "L" + i;
+                        slantLabel = axisLabel + "'";
+                    }
+                    letterCount++;
+                }
+
+                lineData.push({
+                    i, xVal, yMin, yMax, color, is10th,
+                    axisLabel, slantLabel,
+                    arcs: []
+                });
+            }
+        }
+
+        function drawAllLines() {
+            for (let obj of lineData) {
+                drawLine(obj.xVal, obj.yMin, obj.xVal, obj.yMax, obj.color, 1, [2, 2]);
+                if (obj.is10th) {
+                    drawPoint(obj.xVal, 0, obj.axisLabel, "blue");
+                    let t = (Math.abs(Vp.x) > 1e-9) ? obj.xVal / Vp.x : 0;
+                    let yVal = t * Vp.y;
+                    drawPoint(obj.xVal, yVal, obj.slantLabel, "blue");
+                }
+            }
+        }
+
+        function measureArcsForLine(obj) {
+            let t = (Math.abs(Vp.x) > 1e-9) ? obj.xVal / Vp.x : 0;
+            let yVal = t * Vp.y;
+            let dist = Math.abs(yVal);
+            let eq = dist * dist - (focusDist - obj.xVal) * (focusDist - obj.xVal);
+            if (eq < 0) return;
+            let Y0 = Math.sqrt(eq);
+            if (Y0 === 0) {
+                // single => on axis
+                let p = { x: obj.xVal, y: 0, label: obj.i + '"' };
+                drawArcCompass(obj.xVal, 0, dist, obj.is10th);
+                obj.arcs.push(p);
+            } else {
+                // top => i", bottom => i~
+                let pTop = { x: obj.xVal, y: Y0, label: obj.i + '"' };
+                let pBot = { x: obj.xVal, y: -Y0, label: obj.i + '~' };
+                drawArcCompass(obj.xVal, Y0, dist, obj.is10th);
+                drawArcCompass(obj.xVal, -Y0, dist, obj.is10th);
+                obj.arcs.push(pTop, pBot);
+            }
+        }
+
+        function drawArcCompass(px, py, radius, is10th) {
+            let color = is10th ? "darkyellow" : "#fafafa";
+            let angle = Math.atan2(py - 0, px - focusDist);
+            let d = 5 * (Math.PI / 180);
+            ctx.save();
+            ctx.beginPath();
+            ctx.setLineDash([]);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1.2 / scaleFactor;
+            ctx.arc(focusDist, 0, radius, angle - d, angle + d, false);
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawFinalShape() {
+            let ptsAbove = [], ptsBelow = [];
+            for (let obj of lineData) {
+                for (let p of obj.arcs) {
+                    if (p.label.endsWith('~')) ptsBelow.push(p);
+                    else ptsAbove.push(p);
+                }
+            }
+            ptsAbove.sort((a, b) => a.x - b.x);
+            ptsBelow.sort((a, b) => a.x - b.x);
+
+            // top polyline
+            ctx.save();
+            ctx.beginPath();
+            if (ptsAbove.length > 0) {
+                ctx.moveTo(V.x, V.y);
+                for (let i = 0; i < ptsAbove.length; i++) {
+                    let p = ptsAbove[i];
+                    ctx.lineTo(p.x, p.y);
+                }
+            }
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 2 / scaleFactor;
+            ctx.stroke();
+            ctx.restore();
+
+            // bottom polyline
+            ctx.save();
+            ctx.beginPath();
+            if (ptsBelow.length > 0) {
+                ctx.moveTo(V.x, V.y);
+                for (let i = 0; i < ptsBelow.length; i++) {
+                    let p = ptsBelow[i];
+                    ctx.lineTo(p.x, p.y);
+                }
+            }
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 2 / scaleFactor;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawSteps() {
+            parseInputs();
+            V = computeV();
+            Vp = { x: V.x, y: focusDist - V.x };
+            defineLines();
+
+            clearCanvas();
+
+            // step1: directrix x=0 => D,D'
+            if (step >= 1) {
+                drawLine(0, -100, 0, 100, "blue", 2);
+                drawPoint(0, 100, "D", "blue");
+                drawPoint(0, -100, "D'", "blue");
+            }
+            // step2: axis => A(0,0)-> (250,0)
+            if (step >= 2) {
+                drawPoint(0, 0, "A", "blue");
+                drawLine(0, 0, 250, 0, "blue", 1);
+            }
+            // step3: F => dimension AF
+            if (step >= 3) {
+                drawPoint(focusDist, 0, "F", "blue");
+                drawDimensionAF();
+            }
+            // step4: V => ratio
+            if (step >= 4) {
+                drawPoint(V.x, V.y, "V", "blue");
+            }
+            // step5: V->V'
+            if (step >= 5) {
+                drawLine(V.x, 0, Vp.x, Vp.y, "#ccc", 1);
+                drawPoint(Vp.x, Vp.y, "V'", "blue");
+                let dx = Vp.x, dy = Vp.y;
+                let factor = 250 / (Math.abs(dx) || 1);
+                let xExt = dx * factor, yExt = dy * factor;
+                drawLine(0, 0, xExt, yExt, "#ccc", 1);
+            }
+            // step6: vertical lines
+            if (step >= 6) {
+                drawAllLines();
+            }
+            // step7: measure arcs
+            if (step >= 7) {
+                for (let obj of lineData) {
+                    measureArcsForLine(obj);
+                }
+            }
+            // step10 => final shape
+            if (step >= 10) {
+                drawFinalShape();
+                drawDimensionAF();
+            }
+            restoreCanvas();
+        }
+
+        /** Next / Prev / Reset */
+        document.getElementById("nextBtn").addEventListener("click", () => {
+            if (step < totalSteps) step++;
+            drawSteps();
+            updateStepText();
+        });
+        document.getElementById("prevBtn").addEventListener("click", () => {
+            if (step > 0) step--;
+            drawSteps();
+            updateStepText();
+        });
+        document.getElementById("resetBtn").addEventListener("click", () => {
+            step = 0;
+            drawSteps();
+            updateStepText();
+        });
+
+        /** Zoom */
+        document.getElementById("zoomInBtn").addEventListener("click", () => {
+            scaleFactor *= 1.1;
+            drawSteps();
+        });
+        document.getElementById("zoomOutBtn").addEventListener("click", () => {
+            scaleFactor /= 1.1;
+            drawSteps();
+        });
+
+        /** step text update */
+        function updateStepText() {
+            let txt = (stepTexts[step]) ? stepTexts[step] : "Done.";
+            document.getElementById("stepText").textContent = txt;
+        }
+
+        window.onload = () => {
+            W = canvas.offsetWidth;
+            H = canvas.offsetHeight;
+            canvas.width = W;
+            canvas.height = H;
+            step = 0;
+            drawSteps();
+            updateStepText();
+        };
+    </script>
+</body>
+
+</html>

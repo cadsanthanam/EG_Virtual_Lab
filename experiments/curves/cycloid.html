@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycloid Construction - Engineering Graphics Virtual Lab</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .instruction-area {
+            padding: 15px;
+            background-color: #e9f7fe;
+            border-bottom: 1px solid #ddd;
+        }
+        .input-area {
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .drawing-area {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .controls {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .canvas-container {
+            position: relative;
+            border: 1px solid #ddd;
+            background-color: white;
+            overflow: hidden;
+            flex-grow: 1;
+            display: flex;
+        }
+        #drawingCanvas {
+            flex-grow: 1;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .step-indicator {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+        input[type="number"] {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 80px;
+        }
+        label {
+            font-weight: bold;
+        }
+        .view-controls {
+            margin-left: auto;
+            display: flex;
+            gap: 5px;
+        }
+        .view-btn {
+            padding: 5px 10px;
+            background-color: #673ab7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="instruction-area" id="instruction-text">
+            <h2>Cycloid Construction</h2>
+            <p>A cycloid is the curve traced by a point on the rim of a circular wheel as the wheel rolls along a straight line without slipping.</p>
+            <p id="current-step">Step 1: Draw a circle of given diameter and mark the center as O.</p>
+        </div>
+        <div class="input-area">
+            <label for="diameter-input">Circle Diameter (mm):</label>
+            <input type="number" id="diameter-input" min="20" max="200" value="100">
+            <button id="applyBtn">Apply Diameter</button>
+            
+            <div class="view-controls">
+                <button id="zoomInBtn" class="view-btn">+</button>
+                <button id="zoomOutBtn" class="view-btn">−</button>
+                <button id="resetViewBtn" class="view-btn">Reset View</button>
+            </div>
+        </div>
+        <div class="drawing-area">
+            <div class="controls">
+                <button id="prevBtn" disabled>Previous</button>
+                <button id="nextBtn">Next</button>
+                <button id="resetBtn">Reset</button>
+                <span class="step-indicator">Step: <span id="stepCount">1</span>/10</span>
+            </div>
+            <div class="canvas-container">
+                <canvas id="drawingCanvas" height="500"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvas setup
+        const canvasContainer = document.querySelector('.canvas-container');
+        const canvas = document.getElementById('drawingCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Configuration
+        let diameter = parseInt(document.getElementById('diameter-input').value);
+        let radius = diameter / 2;
+        let circumference = Math.PI * diameter;
+        const startX = 150; // starting x position
+        const startY = 350; // starting y position (baseline y-coordinate)
+        
+        // View controls
+        let scale = 1;
+        let offsetX = 0;
+        let offsetY = 0;
+        let isDragging = false;
+        let lastX = 0;
+        let lastY = 0;
+        
+        // Colors
+        const COLORS = {
+            CIRCLE: '#0000A0',        // Dark blue
+            BASELINES: '#8B4513',     // Brown
+            VERTICALS: '#DAA520',     // Gold/Yellow
+            ARCS: '#0000A0',          // Dark blue
+            CYCLOID: '#000000'        // Black
+        };
+        
+        // Step tracking
+        let currentStep = 1;
+        const totalSteps = 10;
+        
+        // Store important points
+        let circlePoints = [];
+        let baselinePoints = [];
+        let centers = [];
+        let cycloidPoints = [];
+        
+        // Step descriptions
+        const stepDescriptions = [
+            "Step 0: Blank canvas. Click Next to begin construction.",
+            "Step 1: Draw a circle of given diameter and mark the center as O.",
+            "Step 2: Divide the circle into eight equal parts and name each division (1-8) in clockwise direction starting from the bottom point.",
+            "Step 3: Draw a baseline from the bottom point of the circle (point 1) for a length equal to the circumference of the generating circle.",
+            "Step 4: Divide the baseline into 8 equal parts and label them. Draw a vertical line at the end point with height equal to the diameter.",
+            "Step 5: Draw horizontal lines from points on the circle circumference parallel to the baseline.",
+            "Step 6: Continue drawing horizontal lines from the other points on the circle circumference.",
+            "Step 7: Draw vertical lines from baseline division points and mark intersection points with the center line as O1, O2, etc.",
+            "Step 8: From centers O, O1, O2, draw arcs to mark points on the cycloid curve on the corresponding horizontal lines.",
+            "Step 9: Continue drawing arcs from centers O4 through O7 to mark remaining points on the cycloid curve.",
+            "Step 10: Join all the points with a smooth curve to complete the cycloid."
+        ];
+
+        // Two flags to handle Step 8's animation for b
+        let step8AnimationStarted = false;
+        let step8AnimationDone = false;
+        let step8O2AnimationStarted = false;
+        let step8O2AnimationDone = false;
+
+        // Initialize buttons
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const applyBtn = document.getElementById('applyBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn');
+        const zoomOutBtn = document.getElementById('zoomOutBtn');
+        const resetViewBtn = document.getElementById('resetViewBtn');
+        const stepCountEl = document.getElementById('stepCount');
+        const currentStepEl = document.getElementById('current-step');
+        
+        // Initialize the drawing
+        function init() {
+            diameter = parseInt(document.getElementById('diameter-input').value);
+            radius = diameter / 2;
+            circumference = Math.PI * diameter;
+            
+            currentStep = 0;
+            circlePoints = [];
+            baselinePoints = [];
+            centers = [];
+            cycloidPoints = [];
+            
+            // Reset animation flags
+            step8AnimationStarted = false;
+            step8AnimationDone = false;
+
+            // Reset view
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            
+            resizeCanvas();  // Make sure the canvas matches the container immediately
+            updateStepUI();
+            draw();
+        }
+        
+        // Apply transformations before drawing
+        function applyTransform() {
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.translate(offsetX, offsetY);
+            ctx.scale(scale, scale);
+        }
+        
+        // Restore context after drawing
+        function restoreTransform() {
+            ctx.restore();
+        }
+        
+        // Draw the current step
+        function draw() {
+            applyTransform();
+            
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // If at step 0, don't draw anything
+            if (currentStep === 0) {
+                restoreTransform();
+                return;
+            }
+
+            // Set default styles
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'black';
+            ctx.fillStyle = 'black';
+            ctx.font = '12px Arial';
+            
+            // STEP 1
+            if (currentStep >= 1) {
+                // Draw circle and center
+                ctx.beginPath();
+                ctx.arc(startX, startY - radius, radius, 0, Math.PI * 2);
+                ctx.strokeStyle = COLORS.CIRCLE;
+                ctx.stroke();
+                ctx.strokeStyle = 'black';
+                
+                // Mark center O
+                ctx.beginPath();
+                ctx.arc(startX, startY - radius, 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillText('O', startX + 5, startY - radius - 5);
+            }
+            
+            // STEP 2
+            if (currentStep >= 2) {
+                circlePoints = [];
+                for (let i = 0; i < 8; i++) {
+                    // (Adapted angle so that bottom is point1, then go clockwise)
+                    const angle = Math.PI * 0.5 - (Math.PI * 2 / 8 * i);
+                    const x = startX + radius * Math.cos(angle);
+                    const y = (startY - radius) + radius * Math.sin(angle);
+                    circlePoints.push({x, y, angle});
+                    
+                    // Mark points
+                    ctx.beginPath();
+                    ctx.arc(x, y, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = COLORS.CIRCLE;
+                    ctx.fill();
+                    ctx.fillStyle = 'black';
+                    
+                    // Position labels
+                    const labelOffset = 12;
+                    let labelX, labelY;
+                    
+                    if (i === 0) { 
+                        labelX = x;
+                        labelY = y + labelOffset;
+                    } else if (i === 4) { 
+                        labelX = x;
+                        labelY = y - labelOffset;
+                    } else if (i < 4) { 
+                        labelX = x + labelOffset;
+                        labelY = y;
+                    } else { 
+                        labelX = x - labelOffset;
+                        labelY = y;
+                    }
+                    
+                    ctx.fillText((i + 1).toString(), labelX, labelY);
+                }
+            }
+            
+            // STEP 3
+            if (currentStep >= 3) {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(startX + circumference, startY);
+                ctx.strokeStyle = COLORS.BASELINES;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'black';
+                ctx.fillText('Baseline (Length = Circumference = π×d)', startX + circumference / 2 - 120, startY + 20);
+            }
+            
+            // STEP 4
+            if (currentStep >= 4) {
+                baselinePoints = [];
+                const segmentLength = circumference / 8;
+                
+                for (let i = 0; i <= 8; i++) {
+                    const x = startX + segmentLength * i;
+                    baselinePoints.push({x, y: startY});
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, startY, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = COLORS.BASELINES;
+                    ctx.fill();
+                    ctx.fillStyle = 'black';
+                    
+                    const label = i === 0 ? "1" : i + "'";
+                    ctx.fillText(label, x, startY + 15);
+                }
+                
+                // Draw vertical line at end
+                ctx.beginPath();
+                ctx.moveTo(baselinePoints[8].x, baselinePoints[8].y);
+                ctx.lineTo(baselinePoints[8].x, baselinePoints[8].y - diameter);
+                ctx.strokeStyle = COLORS.VERTICALS;
+                ctx.stroke();
+                ctx.strokeStyle = 'black';
+                ctx.fillText("8'", baselinePoints[8].x + 5, baselinePoints[8].y - diameter);
+            }
+            
+            // STEP 5
+            if (currentStep >= 5) {
+                ctx.setLineDash([2, 2]); 
+                ctx.strokeStyle = COLORS.BASELINES;
+                
+                for (let i = 0; i < 4; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(circlePoints[i].x, circlePoints[i].y);
+                    ctx.lineTo(baselinePoints[8].x, circlePoints[i].y);
+                    ctx.stroke();
+                }
+                
+                ctx.setLineDash([]); 
+                ctx.strokeStyle = 'black';
+            }
+            
+            // STEP 6
+            if (currentStep >= 6) {
+                ctx.setLineDash([2, 2]); 
+                ctx.strokeStyle = COLORS.BASELINES;
+                
+                for (let i = 4; i < 8; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(circlePoints[i].x, circlePoints[i].y);
+                    ctx.lineTo(baselinePoints[8].x, circlePoints[i].y);
+                    ctx.stroke();
+                }
+                
+                ctx.setLineDash([]); 
+                ctx.strokeStyle = 'black';
+            }
+            
+            // STEP 7
+            if (currentStep >= 7) {
+                centers = [];
+                centers.push({x: startX, y: startY - radius});
+                
+                const centerY = startY - radius;
+                
+                ctx.setLineDash([2, 2]);
+                ctx.strokeStyle = COLORS.VERTICALS;
+                
+                for (let i = 1; i < baselinePoints.length; i++) {
+                    const x = baselinePoints[i].x;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(x, startY);
+                    ctx.lineTo(x, startY - diameter);
+                    ctx.stroke();
+                    
+                    const centerX = x;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = COLORS.VERTICALS;
+                    ctx.fill();
+                    ctx.fillStyle = 'black';
+                    ctx.fillText(`O${i}`, centerX + 5, centerY - 5);
+                    
+                    centers.push({x: centerX, y: centerY});
+                }
+                ctx.setLineDash([]);
+                ctx.strokeStyle = 'black';
+            }
+            
+            // STEP 8: Animate arc from O1 => b, then show c, d.
+            if (currentStep >= 8) {
+                // We draw 'a' (the bottom point) always
+                cycloidPoints = [];
+                ctx.strokeStyle = COLORS.ARCS;
+                
+                // "a"
+                cycloidPoints.push({x: circlePoints[0].x, y: circlePoints[0].y});
+                ctx.beginPath();
+                ctx.arc(cycloidPoints[0].x, cycloidPoints[0].y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = COLORS.ARCS;
+                ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.fillText('a', cycloidPoints[0].x - 10, cycloidPoints[0].y);
+
+                const arcRadius = radius;
+                const arcSize = 2;
+                
+                // If we've NOT started the animation yet, do it and return.
+                if (!step8AnimationStarted) {
+                  nextBtn.disabled = true;
+                  step8AnimationStarted = true;
+                  runStep8Animation();
+                  // We'll skip drawing b,c,d now so they don't appear instantly.
+                  restoreTransform();
+                  return;
+                }
+                
+                // If the animation is done, we can show b, c, d instantly.
+                if (step8AnimationDone) {
+                  // b
+                  const pointB = {
+                    x: centers[1].x,
+                    y: circlePoints[1].y
+                  };
+                  const dx1 = Math.sqrt(Math.pow(arcRadius, 2) - Math.pow(circlePoints[1].y - centers[1].y, 2));
+                  pointB.x = centers[1].x - dx1;
+                  cycloidPoints.push(pointB);
+                  
+                  const angleO1ToB = Math.atan2(pointB.y - centers[1].y, pointB.x - centers[1].x);
+                  ctx.beginPath();
+                  ctx.arc(centers[1].x, centers[1].y, arcRadius, angleO1ToB - Math.PI/6, angleO1ToB + Math.PI/6, false);
+                  ctx.stroke();
+                  
+                  ctx.beginPath();
+                  ctx.arc(pointB.x, pointB.y, arcSize, 0, Math.PI * 2);
+                  ctx.fillStyle = COLORS.ARCS;
+                  ctx.fill();
+                  ctx.fillStyle = 'black';
+                  ctx.fillText('b', pointB.x - 10, pointB.y);
+                  
+                 
+ // Start second animation for point c if not already started
+            if (!step8O2AnimationStarted) {
+                nextBtn.disabled = true;
+                step8O2AnimationStarted = true;
+                runStep8O2Animation();
+                restoreTransform();
+                return;
+            }
+
+            if (step8O2AnimationDone) {                
+                  // c
+                  const pointC = {
+                      x: centers[2].x,
+                      y: circlePoints[2].y
+                  };
+                  const dx2 = Math.sqrt(Math.pow(arcRadius, 2) - Math.pow(circlePoints[2].y - centers[2].y, 2));
+                  pointC.x = centers[2].x - dx2;
+                  cycloidPoints.push(pointC);
+                  
+                  const angleO2ToC = Math.atan2(pointC.y - centers[2].y, pointC.x - centers[2].x);
+                  ctx.beginPath();
+                  ctx.arc(centers[2].x, centers[2].y, arcRadius, angleO2ToC - Math.PI/6, angleO2ToC + Math.PI/6, false);
+                  ctx.stroke();
+                  
+                  ctx.beginPath();
+                  ctx.arc(pointC.x, pointC.y, arcSize, 0, Math.PI * 2);
+                  ctx.fillStyle = COLORS.ARCS;
+                  ctx.fill();
+                  ctx.fillStyle = 'black';
+                  ctx.fillText('c', pointC.x - 10, pointC.y);
+                  
+                  // d
+                  const pointD = {
+                      x: centers[3].x,
+                      y: circlePoints[3].y
+                  };
+                  const dx3 = Math.sqrt(Math.pow(arcRadius, 2) - Math.pow(circlePoints[3].y - centers[3].y, 2));
+                  pointD.x = centers[3].x - dx3;
+                  cycloidPoints.push(pointD);
+                  
+                  const angleO3ToD = Math.atan2(pointD.y - centers[3].y, pointD.x - centers[3].x);
+                  ctx.beginPath();
+                  ctx.arc(centers[3].x, centers[3].y, arcRadius, angleO3ToD - Math.PI/6, angleO3ToD + Math.PI/6, false);
+                  ctx.stroke();
+                  
+                  ctx.beginPath();
+                  ctx.arc(pointD.x, pointD.y, arcSize, 0, Math.PI * 2);
+                  ctx.fillStyle = COLORS.ARCS;
+                  ctx.fill();
+                  ctx.fillStyle = 'black';
+                  ctx.fillText('d', pointD.x - 10, pointD.y);
+
+                  // Re-enable the next button only after all animations are complete
+                nextBtn.disabled = false;
+                }
+            }
+        }
+            
+            // STEP 9
+            if (currentStep >= 9) {
+                ctx.strokeStyle = COLORS.ARCS;
+                const arcRadius = radius;
+                const arcSize = 2;
+                
+                // e (O4)
+                const pointE = {
+                    x: centers[4].x,
+                    y: centers[4].y - radius
+                };
+                cycloidPoints.push(pointE);
+                
+                const angleO4ToE = -Math.PI/2;
+                ctx.beginPath();
+                ctx.arc(centers[4].x, centers[4].y, arcRadius, angleO4ToE - Math.PI/6, angleO4ToE + Math.PI/6, false);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(pointE.x, pointE.y, arcSize, 0, Math.PI * 2);
+                ctx.fillStyle = COLORS.ARCS;
+                ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.fillText('e', pointE.x - 10, pointE.y);
+                
+                // f (O5)
+                const pointF = {
+                    x: centers[5].x,
+                    y: circlePoints[5].y
+                };
+                const dx5 = Math.sqrt(Math.pow(arcRadius, 2) - Math.pow(circlePoints[5].y - centers[5].y, 2));
+                pointF.x = centers[5].x + dx5;
+                cycloidPoints.push(pointF);
+                
+                const angleO5ToF = Math.atan2(pointF.y - centers[5].y, pointF.x - centers[5].x);
+                ctx.beginPath();
+                ctx.arc(centers[5].x, centers[5].y, arcRadius, angleO5ToF - Math.PI/6, angleO5ToF + Math.PI/6, false);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(pointF.x, pointF.y, arcSize, 0, Math.PI * 2);
+                ctx.fillStyle = COLORS.ARCS;
+                ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.fillText('f', pointF.x + 5, pointF.y);
+                
+                // g (O6)
+                const pointG = {
+                    x: centers[6].x,
+                    y: circlePoints[6].y
+                };
+                const dx6 = Math.sqrt(Math.pow(arcRadius, 2) - Math.pow(circlePoints[6].y - centers[6].y, 2));
+                pointG.x = centers[6].x + dx6;
+                cycloidPoints.push(pointG);
+                
+                const angleO6ToG = Math.atan2(pointG.y - centers[6].y, pointG.x - centers[6].x);
+                ctx.beginPath();
+                ctx.arc(centers[6].x, centers[6].y, arcRadius, angleO6ToG - Math.PI/6, angleO6ToG + Math.PI/6, false);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(pointG.x, pointG.y, arcSize, 0, Math.PI * 2);
+                ctx.fillStyle = COLORS.ARCS;
+                ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.fillText('g', pointG.x + 5, pointG.y);
+                
+                // h (O7)
+                const pointH = {
+                    x: centers[7].x,
+                    y: circlePoints[7].y
+                };
+                const dx7 = Math.sqrt(Math.pow(arcRadius, 2) - Math.pow(circlePoints[7].y - centers[7].y, 2));
+                pointH.x = centers[7].x + dx7;
+                cycloidPoints.push(pointH);
+                
+                const angleO7ToH = Math.atan2(pointH.y - centers[7].y, pointH.x - centers[7].x);
+                ctx.beginPath();
+                ctx.arc(centers[7].x, centers[7].y, arcRadius, angleO7ToH - Math.PI/6, angleO7ToH + Math.PI/6, false);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(pointH.x, pointH.y, arcSize, 0, Math.PI * 2);
+                ctx.fillStyle = COLORS.ARCS;
+                ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.fillText('h', pointH.x + 5, pointH.y);
+                
+                // i (O8)
+                const pointI = {
+                    x: centers[8].x,
+                    y: centers[8].y + radius
+                };
+                cycloidPoints.push(pointI);
+                
+                const angleO8ToI = Math.PI/2;
+                ctx.beginPath();
+                ctx.arc(centers[8].x, centers[8].y, arcRadius, angleO8ToI - Math.PI/6, angleO8ToI + Math.PI/6, false);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.arc(pointI.x, pointI.y, arcSize, 0, Math.PI * 2);
+                ctx.fillStyle = COLORS.ARCS;
+                ctx.fill();
+                ctx.fillStyle = 'black';
+                ctx.fillText('i', pointI.x + 5, pointI.y);
+            }
+            
+            // STEP 10
+            if (currentStep >= 10) {
+                ctx.beginPath();
+                ctx.moveTo(cycloidPoints[0].x, cycloidPoints[0].y);
+                
+                // Create a smooth curve through all points using bezierCurveTo
+                for (let i = 1; i < cycloidPoints.length - 2; i++) {
+                    const curr = cycloidPoints[i];
+                    const next = cycloidPoints[i + 1];
+                    
+                    // Calculate control points for smoother curve
+                    const cp1x = curr.x + (next.x - cycloidPoints[i-1].x) / 6;
+                    const cp1y = curr.y + (next.y - cycloidPoints[i-1].y) / 6;
+                    const cp2x = next.x - (cycloidPoints[i+2].x - curr.x) / 6;
+                    const cp2y = next.y - (cycloidPoints[i+2].y - curr.y) / 6;
+                    
+                    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, next.x, next.y);
+                }
+                
+                // Handle the last segment specially
+                const lastIdx = cycloidPoints.length - 1;
+                if (lastIdx >= 2) {
+                    const last = cycloidPoints[lastIdx];
+                    const prevLast = cycloidPoints[lastIdx - 1];
+                    const prevPrevLast = cycloidPoints[lastIdx - 2];
+                    
+                    const cp1x = prevLast.x + (last.x - prevPrevLast.x) / 6;
+                    const cp1y = prevLast.y + (last.y - prevPrevLast.y) / 6;
+                    const cp2x = last.x - (last.x - prevLast.x) / 6;
+                    const cp2y = last.y - (last.y - prevLast.y) / 6;
+                    
+                    ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, last.x, last.y);
+                }
+                ctx.strokeStyle = COLORS.CYCLOID;
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+                ctx.lineWidth = 1;
+                
+                ctx.fillStyle = COLORS.CYCLOID;
+                ctx.font = "bold 14px Arial";
+                ctx.fillText(
+                    'Cycloid Curve (Complete)',
+                    (cycloidPoints[0].x + cycloidPoints[cycloidPoints.length - 1].x) / 2 - 80,
+                    (cycloidPoints[0].y + cycloidPoints[4].y) / 2 - 20
+                );
+                ctx.font = "12px Arial";
+                ctx.fillStyle = "black";
+            }
+            
+            restoreTransform();
+        }
+        
+        // ------------------------------------------------
+        // ANIMATION LOGIC FOR STEP 8 (focus on O1 => b)
+        // ------------------------------------------------
+        function runStep8Animation() {
+          const O1 = centers[1];
+          // Horizontal line for "point 2"
+          const y2 = circlePoints[1].y; 
+
+          // 1) Blink O1 three times
+          let blinkCount = 0;
+          let blinking = false;
+          const blinkInterval = setInterval(() => {
+            blinking = !blinking;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            applyTransform();
+            
+            // Redraw steps 1..7 so everything else is visible
+            // (We basically replicate the drawing logic but only up to step 7.)
+            // We'll just call a helper that partially draws them:
+            drawStepsUpTo7();
+
+            // highlight O1 if blinking is true
+            ctx.beginPath();
+            if (blinking) {
+              ctx.fillStyle = 'red';
+              ctx.arc(O1.x, O1.y, 5, 0, Math.PI * 2);
+            } else {
+              ctx.fillStyle = COLORS.VERTICALS;
+              ctx.arc(O1.x, O1.y, 2, 0, Math.PI * 2);
+            }
+            ctx.fill();
+            
+            restoreTransform();
+
+            if (!blinking) {
+              blinkCount++;
+              if (blinkCount >= 3) {
+                clearInterval(blinkInterval);
+                animateArcFromO1();
+              }
+            }
+          }, 600);
+
+          // 2) Animate the arc from O1 => (b)
+          function animateArcFromO1() {
+            const bY = y2;
+            const dy = bY - O1.y;
+            const dx = -Math.sqrt(radius * radius - dy * dy); // left side (similar to your logic)
+            const bX = O1.x + dx;
+
+            // We'll draw a small partial arc around the angle from O1 to b.
+            const angleCenter = Math.atan2(dy, dx);
+            const arcStart = angleCenter - 0.25;
+            const arcEnd = angleCenter + 0.25;
+            let currentAngle = arcStart;
+
+            const startTime = performance.now();
+            const duration = 1000; // 1s total for arc draw
+
+            function frame(time) {
+              const elapsed = time - startTime;
+              const fraction = Math.min(elapsed / duration, 1);
+              currentAngle = arcStart + fraction * (arcEnd - arcStart);
+
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              applyTransform();
+              drawStepsUpTo7();
+
+              // Draw partial arc in blue (like a 'compass arc')
+              ctx.strokeStyle = 'blue';
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.arc(O1.x, O1.y, radius, arcStart, currentAngle, false);
+              ctx.stroke();
+
+              // Re-draw O1 in black, so it stands out on top
+              ctx.beginPath();
+              ctx.fillStyle = 'black';
+              ctx.arc(O1.x, O1.y, 2, 0, Math.PI * 2);
+              ctx.fill();
+
+              restoreTransform();
+
+              if (fraction < 1) {
+                requestAnimationFrame(frame);
+              } else {
+                // arc animation done => blink radius line & finalize b.
+                blinkRadiusLine(O1, {x: bX, y: bY});
+              }
+            }
+            requestAnimationFrame(frame);
+          }
+
+          // 3) Blink the radius line from O1 => b, then finalize b
+          function blinkRadiusLine(O1, bPoint) {
+            let lineBlinkCount = 0;
+            let showLine = true;
+
+            // We'll again do 3 blinks => 6 toggles.
+            const lineInterval = setInterval(() => {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              applyTransform();
+              drawStepsUpTo7();
+
+              // Re-draw the final arc from arcStart..arcEnd in blue again.
+              const dy = bPoint.y - O1.y;
+              const dx = bPoint.x - O1.x;
+              const angleCenter = Math.atan2(dy, dx);
+              const arcStart = angleCenter - 0.25;
+              const arcEnd = angleCenter + 0.25;
+
+              ctx.strokeStyle = 'blue';
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.arc(O1.x, O1.y, radius, arcStart, arcEnd, false);
+              ctx.stroke();
+
+              // If showLine is true, draw the radius in red.
+              if (showLine) {
+                ctx.strokeStyle = 'red';
+                ctx.beginPath();
+                ctx.moveTo(O1.x, O1.y);
+                ctx.lineTo(bPoint.x, bPoint.y);
+                ctx.stroke();
+              }
+              // Re-draw O1 in black on top.
+              ctx.beginPath();
+              ctx.fillStyle = 'black';
+              ctx.arc(O1.x, O1.y, 2, 0, Math.PI * 2);
+              ctx.fill();
+
+              restoreTransform();
+
+              showLine = !showLine;
+              if (!showLine) {
+                lineBlinkCount++;
+                if (lineBlinkCount >= 3) {
+                  clearInterval(lineInterval);
+                  // The final position of b is known:
+                  // We'll complete the animation now.
+                  step8AnimationDone = true;
+                  draw();
+                }
+              }
+            }, 600);
+          }
+        }
+
+
+        // ------------------------------------------------
+// ANIMATION LOGIC FOR STEP 8 (focus on O2 => c)
+// ------------------------------------------------
+function runStep8O2Animation() {
+    const O2 = centers[2];
+    // Horizontal line for "point 3"
+    const y3 = circlePoints[2].y;
+
+    // 1) Blink O2 three times
+    let blinkCount = 0;
+    let blinking = false;
+    const blinkInterval = setInterval(() => {
+        blinking = !blinking;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        applyTransform();
+        
+        // Redraw steps 1..7 and point b
+        drawStepsUpTo7AndPointB();
+
+        // highlight O2 if blinking is true
+        ctx.beginPath();
+        if (blinking) {
+            ctx.fillStyle = 'red';
+            ctx.arc(O2.x, O2.y, 5, 0, Math.PI * 2);
+        } else {
+            ctx.fillStyle = COLORS.VERTICALS;
+            ctx.arc(O2.x, O2.y, 2, 0, Math.PI * 2);
+        }
+        ctx.fill();
+        
+        restoreTransform();
+
+        if (!blinking) {
+            blinkCount++;
+            if (blinkCount >= 3) {
+                clearInterval(blinkInterval);
+                animateArcFromO2();
+            }
+        }
+    }, 500);
+
+    // 2) Animate the arc from O2 => (c)
+    function animateArcFromO2() {
+        const cY = y3;
+        const dy = cY - O2.y;
+        const dx = -Math.sqrt(radius * radius - dy * dy); // left side
+        const cX = O2.x + dx;
+
+        // Draw partial arc
+        const angleCenter = Math.atan2(dy, dx);
+        const arcStart = angleCenter - 0.25;
+        const arcEnd = angleCenter + 0.25;
+        let currentAngle = arcStart;
+
+        const startTime = performance.now();
+        const duration = 1500; // 1.5s total for arc draw
+
+        function frame(time) {
+            const elapsed = time - startTime;
+            const fraction = Math.min(elapsed / duration, 1);
+            currentAngle = arcStart + fraction * (arcEnd - arcStart);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            applyTransform();
+            drawStepsUpTo7AndPointB();
+
+            // Draw partial arc in blue
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(O2.x, O2.y, radius, arcStart, currentAngle, false);
+            ctx.stroke();
+
+            // Re-draw O2 in black
+            ctx.beginPath();
+            ctx.fillStyle = 'black';
+            ctx.arc(O2.x, O2.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            restoreTransform();
+
+            if (fraction < 1) {
+                requestAnimationFrame(frame);
+            } else {
+                // arc animation done => blink radius line & finalize c
+                blinkRadiusLine(O2, {x: cX, y: cY});
+            }
+        }
+        requestAnimationFrame(frame);
+    }
+
+    // 3) Blink the radius line from O2 => c, then finalize c
+    function blinkRadiusLine(O2, cPoint) {
+        let lineBlinkCount = 0;
+        let showLine = true;
+
+        const lineInterval = setInterval(() => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            applyTransform();
+            drawStepsUpTo7AndPointB();
+
+            // Re-draw the final arc
+            const dy = cPoint.y - O2.y;
+            const dx = cPoint.x - O2.x;
+            const angleCenter = Math.atan2(dy, dx);
+            const arcStart = angleCenter - 0.25;
+            const arcEnd = angleCenter + 0.25;
+
+            ctx.strokeStyle = 'blue';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(O2.x, O2.y, radius, arcStart, arcEnd, false);
+            ctx.stroke();
+
+            // If showLine is true, draw the radius in red
+            if (showLine) {
+                ctx.strokeStyle = 'red';
+                ctx.beginPath();
+                ctx.moveTo(O2.x, O2.y);
+                ctx.lineTo(cPoint.x, cPoint.y);
+                ctx.stroke();
+                
+                // Add radius label 'r' at the midpoint of the line
+                const midX = (O2.x + cPoint.x) / 2;
+                const midY = (O2.y + cPoint.y) / 2;
+                ctx.fillStyle = 'red';
+                ctx.font = 'bold 14px Arial';
+                ctx.fillText('r', midX + 5, midY - 5);
+                ctx.font = '12px Arial';
+                ctx.fillStyle = 'black';
+            }
+            
+            // Re-draw O2 in black
+            ctx.beginPath();
+            ctx.fillStyle = 'black';
+            ctx.arc(O2.x, O2.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            restoreTransform();
+
+            showLine = !showLine;
+            if (!showLine) {
+                lineBlinkCount++;
+                if (lineBlinkCount >= 3) {
+                    clearInterval(lineInterval);
+                    step8O2AnimationDone = true;
+                    draw();
+                }
+            }
+        }, 500);
+    }
+}
+
+
+// Helper function to draw steps 1-7 and point b for the second animation
+function drawStepsUpTo7AndPointB() {
+    // Draw steps 1-7
+    drawStepsUpTo7();
+    
+    // Draw point b
+    const O1 = centers[1];
+    const y2 = circlePoints[1].y;
+    const dy = y2 - O1.y;
+    const dx = -Math.sqrt(radius * radius - dy * dy);
+    const bX = O1.x + dx;
+    const bY = y2;
+    
+    // Draw arc for point b
+    const angleO1ToB = Math.atan2(bY - O1.y, bX - O1.x);
+    ctx.strokeStyle = COLORS.ARCS;
+    ctx.beginPath();
+    ctx.arc(O1.x, O1.y, radius, angleO1ToB - Math.PI/6, angleO1ToB + Math.PI/6, false);
+    ctx.stroke();
+    
+    // Draw point b
+    ctx.beginPath();
+    ctx.arc(bX, bY, 2, 0, Math.PI * 2);
+    ctx.fillStyle = COLORS.ARCS;
+    ctx.fill();
+    ctx.fillStyle = 'black';
+    ctx.fillText('b', bX - 10, bY);
+}
+
+// Event listeners
+prevBtn.addEventListener('click', () => {
+    if (currentStep > 0) {
+        currentStep--;
+        updateStepUI();
+        
+        // Reset animation flags if going back from step 8
+        if (currentStep < 8) {
+            step8AnimationStarted = false;
+            step8AnimationDone = false;
+            step8O2AnimationStarted = false;
+            step8O2AnimationDone = false;
+            nextBtn.disabled = false;
+        }
+        
+        draw();
+    }
+});
+
+
+        // Helper: re-draw steps 1..7 only, so that our animation frames remain consistent.
+        function drawStepsUpTo7() {
+          // step 1: circle, center O
+          ctx.beginPath();
+          ctx.arc(startX, startY - radius, radius, 0, Math.PI * 2);
+          ctx.strokeStyle = COLORS.CIRCLE;
+          ctx.stroke();
+          ctx.strokeStyle = 'black';
+
+          ctx.beginPath();
+          ctx.arc(startX, startY - radius, 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillText('O', startX + 5, startY - radius - 5);
+
+          // step 2: circle points
+          if (circlePoints.length === 0) {
+            for (let i = 0; i < 8; i++) {
+              const angle = Math.PI*0.5 - (Math.PI*2/8 * i);
+              const x = startX + radius*Math.cos(angle);
+              const y = (startY - radius) + radius*Math.sin(angle);
+              circlePoints.push({ x, y });
+            }
+          }
+          for (let i = 0; i < 8; i++) {
+            const pt = circlePoints[i];
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, 2, 0, Math.PI*2);
+            ctx.fillStyle = COLORS.CIRCLE;
+            ctx.fill();
+            ctx.fillStyle = 'black';
+          }
+
+          // step 3: baseline
+          ctx.beginPath();
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(startX + circumference, startY);
+          ctx.strokeStyle = COLORS.BASELINES;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = 'black';
+
+          // step 4: baseline points + vertical end line
+          if (baselinePoints.length === 0) {
+            const segmentLength = circumference / 8;
+            for (let i = 0; i <= 8; i++) {
+              baselinePoints.push({ x: startX + segmentLength*i, y: startY });
+            }
+          }
+          for (let i = 0; i < baselinePoints.length; i++) {
+            const bp = baselinePoints[i];
+            ctx.beginPath();
+            ctx.arc(bp.x, bp.y, 2, 0, Math.PI*2);
+            ctx.fillStyle = COLORS.BASELINES;
+            ctx.fill();
+          }
+          ctx.beginPath();
+          ctx.moveTo(baselinePoints[8].x, baselinePoints[8].y);
+          ctx.lineTo(baselinePoints[8].x, baselinePoints[8].y - diameter);
+          ctx.strokeStyle = COLORS.VERTICALS;
+          ctx.stroke();
+          ctx.strokeStyle = 'black';
+
+          // step 5: horizontal lines from bottom half circle (points 1..4)
+          ctx.setLineDash([2,2]);
+          ctx.strokeStyle = COLORS.BASELINES;
+          for (let i = 0; i < 4; i++) {
+            const pt = circlePoints[i];
+            ctx.beginPath();
+            ctx.moveTo(pt.x, pt.y);
+            ctx.lineTo(baselinePoints[8].x, pt.y);
+            ctx.stroke();
+          }
+
+          // step 6: horizontal lines from top half circle (points 5..8)
+          for (let i = 4; i < 8; i++) {
+            const pt = circlePoints[i];
+            ctx.beginPath();
+            ctx.moveTo(pt.x, pt.y);
+            ctx.lineTo(baselinePoints[8].x, pt.y);
+            ctx.stroke();
+          }
+          ctx.setLineDash([]);
+
+          // step 7: vertical lines from baseline, label O1..O8 etc.
+          if (centers.length === 0) {
+            centers.push({ x: startX, y: startY - radius }); // O
+            const centerY = startY - radius;
+            for (let i = 1; i < baselinePoints.length; i++) {
+              const bx = baselinePoints[i].x;
+              ctx.setLineDash([2,2]);
+              ctx.strokeStyle = COLORS.VERTICALS;
+              ctx.beginPath();
+              ctx.moveTo(bx, startY);
+              ctx.lineTo(bx, startY - diameter);
+              ctx.stroke();
+              ctx.setLineDash([]);
+              centers.push({ x: bx, y: centerY });
+            }
+          } else {
+            for (let i = 1; i < baselinePoints.length; i++) {
+              const bx = baselinePoints[i].x;
+              ctx.setLineDash([2,2]);
+              ctx.strokeStyle = COLORS.VERTICALS;
+              ctx.beginPath();
+              ctx.moveTo(bx, startY);
+              ctx.lineTo(bx, startY - diameter);
+              ctx.stroke();
+              ctx.setLineDash([]);
+            }
+          }
+          // label them quickly
+          ctx.fillStyle = 'black';
+          for (let i = 0; i < centers.length; i++) {
+            const cc = centers[i];
+            ctx.beginPath();
+            ctx.arc(cc.x, cc.y, 2, 0, Math.PI*2);
+            ctx.fillStyle = COLORS.VERTICALS;
+            ctx.fill();
+            ctx.fillStyle = 'black';
+            if (i === 0) ctx.fillText("O", cc.x+5, cc.y-5);
+            else         ctx.fillText(`O${i}`, cc.x+5, cc.y-5);
+          }
+        }
+
+
+        // Update step information in UI
+        function updateStepUI() {
+            stepCountEl.textContent = currentStep;
+            currentStepEl.textContent = stepDescriptions[currentStep];
+            
+            // Update button states
+            prevBtn.disabled = currentStep === 0;
+            nextBtn.disabled = currentStep === totalSteps;
+        }
+        
+        // Pan and zoom functionality
+        function setupCanvasInteraction() {
+            canvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                canvas.style.cursor = 'grabbing';
+            });
+            
+            window.addEventListener('mouseup', () => {
+                isDragging = false;
+                canvas.style.cursor = 'default';
+            });
+            
+            window.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const dx = e.clientX - lastX;
+                const dy = e.clientY - lastY;
+                
+                offsetX += dx;
+                offsetY += dy;
+                
+                lastX = e.clientX;
+                lastY = e.clientY;
+                
+                draw();
+            });
+            
+            // Zoom with scroll wheel
+            canvas.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+                
+                // Calculate old position in the un-scaled, un-translated coordinate system
+                const oldX = (mouseX - offsetX) / scale;
+                const oldY = (mouseY - offsetY) / scale;
+                
+                // Zoom direction
+                if (e.deltaY < 0) {
+                    scale *= 1.1;
+                } else {
+                    scale /= 1.1;
+                }
+                
+                // Limit scale
+                scale = Math.min(Math.max(0.5, scale), 3);
+                
+                // Recompute offset so that the zoom is centered on the mouse location
+                const newX = mouseX - oldX * scale;
+                const newY = mouseY - oldY * scale;
+                
+                offsetX = newX;
+                offsetY = newY;
+                
+                draw();
+            });
+        }
+        
+        // Event listeners
+        prevBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepUI();
+                draw();
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepUI();
+                draw();
+            }
+        });
+        
+        resetBtn.addEventListener('click', init);
+        
+        applyBtn.addEventListener('click', () => {
+            const diameterInput = document.getElementById('diameter-input');
+            const value = parseInt(diameterInput.value);
+            
+            if (value >= 20 && value <= 200) {
+                init();
+            } else {
+                alert("Please enter a diameter between 20 and 200 mm.");
+                diameterInput.value = diameter;
+            }
+        });
+        
+        zoomInBtn.addEventListener('click', () => {
+            scale *= 1.2;
+            scale = Math.min(scale, 3);
+            draw();
+        });
+        
+        zoomOutBtn.addEventListener('click', () => {
+            scale /= 1.2;
+            scale = Math.max(scale, 0.5);
+            draw();
+        });
+        
+        resetViewBtn.addEventListener('click', () => {
+            scale = 1;
+            offsetX = 0;
+            offsetY = 0;
+            draw();
+        });
+
+        function resizeCanvas() {
+            canvas.width = canvasContainer.clientWidth;
+            canvas.height = canvasContainer.clientHeight;
+            draw(); // Redraw your scene at the new size
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Initialize everything
+        setupCanvasInteraction();
+        init();
+    </script>
+</body>
+</html>
