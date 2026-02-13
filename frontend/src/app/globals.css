@@ -1,0 +1,151 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+/* 
+  NOTE: We are using Tailwind v4. 
+  The @config directive above explicitly loads our TypeScript config.
+*/
+
+/* ─────────────────────────────────────────────────────────
+   CSS CUSTOM PROPERTIES — shadcn/ui HSL token layer
+   These are consumed by shadcn components automatically.
+   Mapped from the Tailwind color config above.
+───────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    /* shadcn/ui required tokens */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 239 84% 67%;
+    /* indigo-500: #6366f1 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 16% 47%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 263 70% 64%;
+    /* violet: #8b5cf6 */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 239 84% 67%;
+    --radius: 0.5rem;
+  }
+
+  /* ── Base resets ── */
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-surface-canvas text-ink antialiased;
+    font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading, 'Plus Jakarta Sans', system-ui, sans-serif);
+  }
+
+  /* ── Screen-reader only utility ── */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   CANVAS DRAWING COLORS — Used by canvas-renderer.ts
+   These should NOT move to Tailwind (runtime JS reads them)
+───────────────────────────────────────────────────────── */
+:root {
+  --canvas-bg: #f8f9fc;
+  --canvas-xy-line: #1e293b;
+  --canvas-visible-edge: #0f172a;
+  --canvas-hidden-edge: #64748b;
+  --canvas-construction: #cbd5e1;
+  --canvas-label-color: #374151;
+  --canvas-point-color: #6366f1;
+}
+
+/* ─────────────────────────────────────────────────────────
+   FOCUS VISIBLE — WCAG 2.1 AA keyboard navigation
+───────────────────────────────────────────────────────── */
+@layer base {
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+
+  :focus:not(:focus-visible) {
+    @apply outline-none;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   SCROLLBAR — Thin, elegant, platform-consistent
+───────────────────────────────────────────────────────── */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(99, 102, 241, 0.2) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(99, 102, 241, 0.2);
+    border-radius: 999px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.35);
+  }
+
+  .scrollbar-dark {
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
