@@ -140,13 +140,15 @@ Draw the Reference Line (XY Line) for about 5 times axis length and name it as x
 STEP 2
 Draw the Front View True Shape
 
-Since the axis is perpendicular to VP, the true shape of the base will be seen in the Front View (above XY). Now the front view is a true shape of the polygon (triangle, square, pentagon, hexagon, circle). 
+Since the axis is perpendicular to VP, the true shape of the base will be seen in the Front View (above XY). Now the front view is a true shape of the polygon (triangle, square, pentagon, hexagon, circle). Always remember that the front view shall always be drawn above xy - menaning that the polygon shall be drawn above xy line, after drawing teh first side of the polygon other sides shall be drawin directed away from xy line (at the end complete polygon will be above xy line, not crossing below xy)
 
-In order to draw the true shape the following details are required, 1. Polygon shape (as identified by the name of the solid) 2. Side length (edgeLength ) of the polygon (given as base edge length or base side length) 3. Orientation of the polygon (alpha) with respect to the xy line 4. Location of the true shape with respect to xy line (distance ‘h’ from xy line, if the solid rests on HP then h =0)
+In order to draw the true shape the following details are required, 1. Polygon shape (as identified by the name of the solid) 2. Side length (edgeLength ) of the polygon (given as base edge length or base side length) 3. Orientation of the polygon (alpha) with respect to the xy line - this will be mentioned in the question using certain keywords such as the prism is resting on HP on one of its rectangular faces, or prison is resting on HP on one of  its longer edges or the pyramid is resting on HP on one of its base edge or basse corner (the procedure to draw polygon for each case is explained below) 4. Location of the true shape with respect to xy line (distance ‘h’ from xy line, if the solid rests on HP then h =0)
 Angle alpha is determined using following keywords:
 If the given solid is a prism, the angle alpha is mentioned by following  keywords
-Prism is resting on HP on its rectangular faces/ prism is resting on its lateral surface on HP means alpha=0, prism is resting on HP one one of its longer edge with the faces containing the longer edge equally inclined means alpha=45 degree, or the prism rest on HP on one of its longer edge such that the face containing the longer edge makes alpha angle with HP.simply, When prism rests on rectangular face: first edge of polygon is drawn horizontally from the starting point. When resting on longer edge: first edge is drawn at angle α from XY
-If the given solid is pyramid, the solid rest on HP on one of its base edges means angle alpha equal to zero, the pyramid rest on HP on one of its base corner such that one of the base edge is making alpha angle with HP.
+1. Prisms are resting on HP on its rectangular faces/ prism is resting on its lateral surface on HP means alpha=0 i.e. one of the side edge of the true shape (i.e. polygon) rests in HP, so we have to draw the first edge in xy line and construcct all other edges accordingly as per polygon drawing procedure,  2. prisms that are resting on HP one one of its longer edge with the one  of the face containing the longer edge makes a specific alpha angle, in this case the polygon must be drawin with one of the sides making alpha angle with xy line. draw the first side with alpha angle with xy line and construcct all other sides as per polygon drawing procedure. as a special case sometimes it may be mentioned that the faces containing the resting edge makes equal angle with HP, in this case the polygon must be drawin such that one corner of the polygon will be in HP and adjacent sides of the polygon will be equally making saame angle with xy line and other edgess constructed as per usual procedure. in other words angle  of inclination shall be computed based on the polygo if the faces/rectangular surfaces are equally inclined with HP (if the polygon is square/rectangle then for equal inclination alha will be equal to 45 degree, in case of triangle alpha will be equal to 60 degrees., in case of pentagon it will be 36 dgeree and so on - make an appropriate calculation and logic for all other polygons).
+
+If the given solid is pyramid, there are two possibilities 1. the solid rest on HP on one of its base edges or 2. The solid rest on HP on one of its base corners.
+If the pyramid rest on HP on one of its basse edges then One of the side of the polygon will be drawin in xy line and other sides construced as per polygon drawing logic. This means angle alpha equal to zero. If the the pyramid rest on HP on one of its base corner then the angle alpha of the one of the base edge of the solid (angle made by one of the sides of th epolygon with respecct to xy line). and sometimes when the solid is resting on HP on one of its base corner, and base edges containing that corner are equally inclined to HP - in this casse the polygon must be drawn such that one corner is in xy line and the two adjacent sides are making equal angle with horizontal xy line.
 
 Now based on these given data we will proceed with drawing the true shape.
 The first corner of the polygon in front view is marked 30mm from the left end of the xy line and ‘h’ distance above the xy line (if the solid rests on HP, then h=0, and hence the first point will be marked on the xy line). After marking the first corner which is named as 1’, mark the second point at a distance of edgeLength from the first point (on the right side of first point) such that the line joining 1’ and 2’ makes an angle of alpha with xy line. Now we have a straight line (1’-2’) representing one side of the polygon. Length of line 1’-2’ is equal to side length of polygon, angle of the line with xy is defined by angle alpha, position of the first point defined by ‘h’ (distance of solid from HP). Now we need to complete the polygon (which is completely above the reference line, MUST no go below xy line), by considering this line as one of the edges (use proper logic, strictly remember that the first line 1’-2’ serves as one of the edges/sides of the polygon and rest of the sides are drawn from 2’ such that 2’-3’. 3’-4’ etc are drawn as per the number of sides, remember that the nth side is the closing side of the polygon. The complete polygon is drawn such that the final polygon is completely above xy line (either touching/lying on HP i.e xy line or above xy line as per given distance.
@@ -174,7 +176,7 @@ Identify Visible vs. Hidden Edges in the top view.
 
 Darken the final outlines, add dashed lines for hidden edges, and label all corners in top view (A, B, C… or 1, 2, 3… with primes or other notations as needed).
 
-CASE C: Axis Inclined to HP
+*** CASE C: Axis Inclined to HP ***
 IF the problem falls under this category, then we can solve the problem in two phases.
 
 Phase I:
@@ -195,7 +197,7 @@ Phase 2 involves further steps to get the final front view and final top view.
 Step 2
 
 Now based on resting on the base edge or resting on the base corner of the solid we have the initial top view and initial front view from phase I. Now after drawing the initial views we have to proceed with step 2. In step 2 we draw the final front view which is drawn based on the initial front view of the solid. The procedure is given below.
-Now after completing the initialFV, we need to reproduce the exact shape of the initialFV (in which the axis is perpendicular to xy line) in the final FV such that the axis makes the given axis angle specified in the problem, also the rightside corner still on HP (xy line). In other words the figure obtained in front view is tilted(rotated wrt the lower right corner point) about the lower right point of the figure and this new tilted diagram is drawn separately on the same xy line with a gap of (45mm +2 times side length ) from the initial view. Now at the end of initialFV a prism has 2n corners, and a pyramid has n+1 corners. All the 2n corners of the prism was named properly with lower corners as 1’, 2’, 3’ etc, and top corners as a’, b’, c’ etc. Now we also have the exact coordinate positions of each corner in the initial front view, now all these corners has to be rotated by an angle theta (inclination of axis with HP) about the right lower corner of the initial front view, And the naming has to be done as 11’, 21’, 31’, 41’ etc likewise a1’, b1’, c1’, etc (i.e. a letter with suffix of 1, and prime for FV). the naming MUST be done just same as that of initial views. In order to make the procedure intuitively understanding for the students we can follow below procedure. Now we have the initial top view (true shape of the polygon), and initial front view (showing axis length, and solid in vertical position (axis vertical to xy). Now we marked all the corners of both the front and top views. Third drawing is the final frontview which is replica of the initial FV but with rotation. Hence we use below logic to make the concept easy to understand and easy to draw. I.e. we take the initial front view of the solid (we have 2n corners in case of prism, and n+1 corners in casse of pyramid), we also stored the coordinate of each corner(i.e coordinate of 1’, 2’, 3’ etc and a’, b’, c’ etc are stored). Now take the lower right corner of the shape/drawing in initial front view, and rotate the entire drawing, rotate each corner by considering the lower right corner as pivot and complete the final front view with just rotation. And join all the corners just using corners joining logic or prism as well as pyramid. After rotation, now we stored the new coordinates under new names (11’, 21’, 31’ etc, and a1’, b1’, c1’ etc). Then translate the entire drawing (newly rotated shape 11’, 21’, 31’ etc, and a1’, b1’, c1’ etc) along xy line to a new position which is 45mm +2 times side length away from the pivot corner. Thus we provided a visual cue that the new rotated drawing is just the same shape with same dimensions, same edges but with axis and all other edges inclined to HP correspondingly (the relative angles between each corner is unchanged). Now we have got the final front view. Once check for all the corners in the new drawing (prisms 2n corners, pyramids n+1 corners), and also check naming is given or all the corners as per the solid type (each corner is named based on the rotated parent corners, but with a subscript of 1)
+Now after completing the initialFV, we need to reproduce the exact shape of the initialFV (in which the axis is perpendicular to xy line) in the final FV such that the axis makes the given axis angle (theta)specified in the problem, also the rightside corner still on HP (xy line). In other words the figure obtained in front view is tilted(rotated wrt the lower right corner point) about the lower right point of the figure and this new tilted diagram is drawn separately on the same xy line with a gap of (45mm +2 times side length ) from the initial view. Now at the end of initialFV a prism has 2n corners, and a pyramid has n+1 corners. All the 2n corners of the prism was named properly with lower corners as 1’, 2’, 3’ etc, and top corners as a’, b’, c’ etc. Now we also have the exact coordinate positions of each corner in the initial front view, now all these corners has to be rotated by an angle theta (inclination of axis with HP) about the right lower corner of the initial front view, And the naming has to be done as 11’, 21’, 31’, 41’ etc likewise a1’, b1’, c1’, etc (i.e. a letter with suffix of 1, and prime for FV). the naming MUST be done just same as that of initial views. In order to make the procedure intuitively understanding for the students we can follow below procedure. Now we have the initial top view (true shape of the polygon), and initial front view (showing axis length, and solid in vertical position (axis vertical to xy). Now we marked all the corners of both the front and top views. Third drawing is the final frontview which is replica of the initial FV but with rotation. Hence we use below logic to make the concept easy to understand and easy to draw. I.e. we take the initial front view of the solid (we have 2n corners in case of prism, and n+1 corners in casse of pyramid), we also stored the coordinate of each corner(i.e coordinate of 1’, 2’, 3’ etc and a’, b’, c’ etc are stored). Now take the lower right corner of the shape/drawing in initial front view, and rotate the entire drawing, rotate each corner by considering the lower right corner as pivot and complete the final front view with just rotation. And join all the corners just using corners joining logic or prism as well as pyramid. After rotation, now we stored the new coordinates under new names (11’, 21’, 31’ etc, and a1’, b1’, c1’ etc). Then translate the entire drawing (newly rotated shape 11’, 21’, 31’ etc, and a1’, b1’, c1’ etc) along xy line to a new position which is 45mm +2 times side length away from the pivot corner. Thus we provided a visual cue that the new rotated drawing is just the same shape with same dimensions, same edges but with axis and all other edges inclined to HP correspondingly (the relative angles between each corner is unchanged). Now we have got the final front view. Once check for all the corners in the new drawing (prisms 2n corners, pyramids n+1 corners), and also check naming is given or all the corners as per the solid type (each corner is named based on the rotated parent corners, but with a subscript of 1)
 
 STEP 3:
 The last step is to draw the final top view of the solid. The procedure is given below. After step 2 we have the final front view with all the corners marked and coordinates stored, likewise we also have the initial top view with all the corners marked. Now draw vertical projector lines from each and every corner (11’, 21’, 31’ etc, and a1’, b1’, c1’ etc in case of prism we must draw 2n vertical lines where n - no of corners, and in case of pyramid we must draw n+1 vertical lines) in the final front view downwards such that these vertical lines are drawn below xy line till the lowest point in the initial top view. I.e. identify the lowest corner in the initial top view (the corner with least value of y coordinate), and the vertical lines from each corner in the final front view has to be drawn to match this lowest y axis value. Now draw horizontal lines from each and every corner in the initial top view (again 2n horizontal lines for prism, n+1 horizontal lines for pyramid) till the right most vertical projector line. Now we will have each horizontal locus line intersecting the vertical projector line from each of the corner. Now for every horizontal line from each corner, check for corresponding vertical line from the same corner (i.e if horizontal line is  drawn  from corner a, check for vertical line from a1’, similarly for all other corners checck for the intersection) and name the corners of intersection as a1, b1, c1 etc, and 11, 21, 31 etc representing the final top view. 
@@ -214,41 +216,42 @@ In case of prism, join all the corners of the top surface (a1, b1, c1 etc) using
 In case of pyramid we joined all the outermost corners, then by rule of thumb the base is at the bottom and hance part of it will be invisible, so if there are any base corners not yet joined, join them using hidden lines. Now finally join all the base corners with the apex o, for that if a base corner is joined by two hidden lines then it will be joined with the apex using hidden line, all other basse corners are joined using visible lines.
 
 
-4) Axis Inclined to VP
+*** Case D ***  Axis Inclined to VP
 Again, a two-step approach:
 
-Step-1: Assume axis is perpendicular to VP. Draw initial views.
+Input required: all the inputs as per case B + axis angle (phi) with VP.
+
+Step-1: Assume axis is perpendicular to VP similar to case B. Draw initial views following case B procedure.
 
 Step-2: Tilt/rotate the Top View so that the axis is inclined by the given angle to VP. Then find the final front view from that new top view.
 
 Step-by-Step
-Initial Setup (Axis ⟂ VP)
 
-Draw the Front View that shows the true shape of the base.
+Phase I:
+draw the intitial front view, then top view following casse B procedure.
 
-Project down to get the corresponding Top View. Label corners, mark the axis.
+Phase II:
 
 Tilt the Axis in the Top View
 
-Now, you have to rotate/tilt the top view so that the axis is at the given inclination with the VP.
+fater phaseI we will have intial front view, and initial top view. next tsep is to draw the final top view, then proceed with final front view as the last step.
+
+Now, you have to rotate/tilt the initial top view so that the axis is at the given inclination with the VP in the final top view.
 
 Suppose the problem states that the axis is at 40° to VP. That means in top view, you want the axis to be drawn at 40° from some reference line.
 
-Redraw the top view in this new inclined position (“Step-2 Top View”).
+the procedure is given below:
 
+from the initial top view, take the point nearer to xy also on the right side of axis line (top right point in initial top view). now we will start the final top view adjacent to the initial top view leaving a gap of approx eqaul to twice the side legth of the polygon. In the initial top view the axis is at 90 degree to xy line and all other edges/sides are drawn in the initial top view. in this final top view we need to make the axis inclined to the speccific angle and redraw the whole figure rotated at the given angle (phi) with VP. remember that the logic is to rotate the entire figure as per the angle phi so that the axis makes phi angle with xy, also the base makes (90 - phi) angle with xy. (this is true for both prism and pyramid).
+
+naming should be same as that of case C (i.e. final top view to be names with subscript). after  this the final front view to be obtained using the same procedure as that of case C (i.e. draw horizontal locus lines from each corner from initial front view, and draw vertical projecctor lines from each corner of the final top view). and mark the respecctive corners based on points intersection and mark all the corners in the final front view.
 Project Upwards to Get the Final Front View
-
-From each corner in the “Step-2 Top View,” draw vertical lines upwards.
-
-From the “Step-1 Front View,” draw horizontal locus lines.
-
-Intersection of these lines gives the final front view corners.
 
 Connect them appropriately, darken visible edges, and dash hidden edges.
 
 Finish & Label
 
-Identify the final corners (A’, B’, C’, …).
+Identify the final corners with subscripts and with a prime.
 
 Mark the axis with its new position in top view or front view.
 

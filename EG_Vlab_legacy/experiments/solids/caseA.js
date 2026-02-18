@@ -132,19 +132,28 @@ function drawCaseA_TopViewPrism(sides) {
     ctx.stroke();
     ctx.restore();
 
-    // Draw and label all corners
+    // Draw and label all corners — two labels side by side (top letter LEFT, base number RIGHT)
     ctx.save();
     ctx.font = `${config.labelFontSize}px ${getComputedStyle(document.body).fontFamily}`;
     ctx.fillStyle = config.labelColor;
 
-    for (let pt of points) {
-        // Draw point
+    for (let i = 0; i < points.length; i++) {
+        const pt = points[i];
+        // Draw point dot
         ctx.beginPath();
         ctx.arc(pt.x, pt.y, 2, 0, 2 * Math.PI);
         ctx.fill();
 
-        // Label with both top and bottom corner notation
-        ctx.fillText(pt.label, pt.x + 5, pt.y - 5);
+        // Two labels side by side, offset from the point so they don't overlap edges
+        const topLabel = String.fromCharCode(97 + i);       // a, b, c …
+        const baseLabel = '(' + (i + 1) + ')';               // (1), (2), (3) …
+        const gap = 3;
+        const topW = ctx.measureText(topLabel).width;
+        // Position: top-left of label block starts at pt.x + 5, baseline at pt.y - 4
+        const labelX = pt.x + 5;
+        const labelY = pt.y - 4;
+        ctx.fillText(topLabel, labelX, labelY);
+        ctx.fillText(baseLabel, labelX + topW + gap, labelY);
     }
 
     // Mark center point 'O'
@@ -462,22 +471,53 @@ function drawCaseA_FrontViewPrism(sides) {
     }
 
     // 4. Label all corners with point markers
+    // Group corners by X coordinate — coincident corners rendered side by side
     ctx.save();
     ctx.font = `${config.labelFontSize}px ${getComputedStyle(document.body).fontFamily}`;
     ctx.fillStyle = config.labelColor;
 
-    for (let i = 0; i < n; i++) {
-        // Base corner point and label
-        ctx.beginPath();
-        ctx.arc(baseCorners[i].x, baseCorners[i].y, 2, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.fillText(baseCorners[i].label, baseCorners[i].x + 5, baseCorners[i].y + 15);
+    const gap = 3;
 
-        // Top corner point and label
+    // Group base corners by X
+    const baseByX = {};
+    for (let i = 0; i < n; i++) {
+        const key = Math.round(baseCorners[i].x);
+        if (!baseByX[key]) baseByX[key] = [];
+        baseByX[key].push(i);
+    }
+    for (const key of Object.keys(baseByX)) {
+        const group = baseByX[key];
+        const refC = baseCorners[group[0]];
         ctx.beginPath();
-        ctx.arc(topCorners[i].x, topCorners[i].y, 2, 0, 2 * Math.PI);
+        ctx.arc(refC.x, refC.y, 2, 0, 2 * Math.PI);
         ctx.fill();
-        ctx.fillText(topCorners[i].label, topCorners[i].x + 5, topCorners[i].y - 8);
+        let curX = refC.x + 5;
+        for (const idx of group) {
+            const lbl = baseCorners[idx].label;
+            ctx.fillText(lbl, curX, refC.y + 15);
+            curX += ctx.measureText(lbl).width + gap;
+        }
+    }
+
+    // Group top corners by X
+    const topByX = {};
+    for (let i = 0; i < n; i++) {
+        const key = Math.round(topCorners[i].x);
+        if (!topByX[key]) topByX[key] = [];
+        topByX[key].push(i);
+    }
+    for (const key of Object.keys(topByX)) {
+        const group = topByX[key];
+        const refC = topCorners[group[0]];
+        ctx.beginPath();
+        ctx.arc(refC.x, refC.y, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        let curX = refC.x + 5;
+        for (const idx of group) {
+            const lbl = topCorners[idx].label;
+            ctx.fillText(lbl, curX, refC.y - 8);
+            curX += ctx.measureText(lbl).width + gap;
+        }
     }
     ctx.restore();
 
@@ -580,17 +620,30 @@ function drawCaseA_FrontViewPyramid(sides) {
         }
     }
 
-    // 3. Label all corners with point markers
+    // 3. Label all corners — group coincident-X base corners side by side
     ctx.save();
     ctx.font = `${config.labelFontSize}px ${getComputedStyle(document.body).fontFamily}`;
     ctx.fillStyle = config.labelColor;
+    const gap = 3;
 
-    // Label base corners
+    const baseByX = {};
     for (let i = 0; i < n; i++) {
+        const key = Math.round(baseCorners[i].x);
+        if (!baseByX[key]) baseByX[key] = [];
+        baseByX[key].push(i);
+    }
+    for (const key of Object.keys(baseByX)) {
+        const group = baseByX[key];
+        const refC = baseCorners[group[0]];
         ctx.beginPath();
-        ctx.arc(baseCorners[i].x, baseCorners[i].y, 2, 0, 2 * Math.PI);
+        ctx.arc(refC.x, refC.y, 2, 0, 2 * Math.PI);
         ctx.fill();
-        ctx.fillText(baseCorners[i].label, baseCorners[i].x + 5, baseCorners[i].y + 15);
+        let curX = refC.x + 5;
+        for (const idx of group) {
+            const lbl = baseCorners[idx].label;
+            ctx.fillText(lbl, curX, refC.y + 15);
+            curX += ctx.measureText(lbl).width + gap;
+        }
     }
 
     // Label apex

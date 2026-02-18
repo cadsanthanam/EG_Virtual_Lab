@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projections of Straight Lines — Virtual Lab</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="lines-styles.css">
+  <style>
+    /* ── NLP Panel additions ─────────────────────────────────── */
+    .nlp-section {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nlp-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .nlp-textarea {
+      width: 100%;
+      min-height: 80px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 11.5px;
+      line-height: 1.5;
+      padding: 8px 10px;
+      resize: vertical;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    .nlp-textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .nlp-btn-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    /* ── Parser feedback card ────────────────────────────────── */
+    .parse-result {
+      margin-top: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      font-size: 11px;
+      display: none;
+    }
+
+    .parse-result.visible {
+      display: block;
+    }
+
+    .parse-result.ok {
+      border-color: #238636;
+    }
+
+    .parse-result.err {
+      border-color: #b91c1c;
+    }
+
+    .pr-proc {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 12px;
+    }
+
+    .pr-conf {
+      color: var(--text-muted);
+    }
+
+    .pr-slots {
+      font-weight: 600;
+    }
+
+    .pr-slots.ok {
+      color: #3fb950;
+    }
+
+    .pr-slots.bad {
+      color: #f85149;
+    }
+
+    .pr-vals {
+      margin-top: 6px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .pr-vals span {
+      color: var(--text);
+      font-family: var(--font-mono);
+    }
+
+    .pr-warn {
+      color: #f85149;
+      margin-top: 4px;
+    }
+
+    .pr-reason {
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* ── Why panel ───────────────────────────────────────────── */
+    .why-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .why-toggle input {
+      cursor: pointer;
+    }
+
+    .why-toggle label {
+      font-size: 11px;
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .why-text {
+      display: none;
+      margin-top: 6px;
+      padding: 8px 10px;
+      background: var(--bg);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .why-text.visible {
+      display: block;
+    }
+
+    /* ── Confidence badge ────────────────────────────────────── */
+    .conf-badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .conf-high {
+      background: #1a3a1a;
+      color: #3fb950;
+    }
+
+    .conf-mid {
+      background: #3a2a00;
+      color: #d29922;
+    }
+
+    .conf-low {
+      background: #3a1a1a;
+      color: #f85149;
+    }
+
+    /* ── Manual section divider ──────────────────────────────── */
+    .panel-divider {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ═══════════════════════════════════════════════════════════
+     APP SHELL  (matches .app-shell in CSS)
+═══════════════════════════════════════════════════════════ -->
+  <div class="app-shell">
+
+    <!-- ══════════════════════════════════════════════════════════
+       LEFT PANEL — Inputs  (.input-panel in CSS)
+  ══════════════════════════════════════════════════════════ -->
+    <aside class="input-panel">
+
+      <!-- Brand -->
+      <div class="panel-brand">
+        <span class="brand-icon">📐</span>
+        <div>
+          <div class="brand-title">Straight Lines Lab</div>
+          <div class="brand-sub">First Angle Projection</div>
+        </div>
+      </div>
+
+      <!-- Scrollable content area -->
+      <div class="panel-scroll">
+
+        <!-- ── NLP Input ──────────────────────────────────────── -->
+        <div class="input-section">
+          <div class="nlp-label">📝 Problem Statement (NLP)</div>
+          <textarea id="nlpInput" class="nlp-textarea"
+            placeholder="Type the problem in plain English, e.g.:&#10;A line AB 75mm long is inclined at 30° to HP and 45° to VP. End A is 20mm above HP and 25mm in front of VP."></textarea>
+          <div class="nlp-btn-row">
+            <button class="btn-primary" onclick="parseAndDraw()" style="flex:1;">⚡ Parse &amp; Draw</button>
+            <button class="btn-ghost" onclick="clearNLP()" style="width:auto;padding:7px 12px;">Clear</button>
+          </div>
+
+          <!-- Parser feedback -->
+          <div id="parseResult" class="parse-result">
+            <div id="prProc" class="pr-proc"></div>
+            <div id="prConf" class="pr-conf"></div>
+            <div id="prSlots" class="pr-slots"></div>
+            <div id="prVals" class="pr-vals"></div>
+            <div id="prWarn" class="pr-warn"></div>
+            <div id="prReason" class="pr-reason"></div>
+          </div>
+        </div>
+
+        <!-- ── Manual / Dropdown Input ─────────────────────── -->
+        <div class="input-section">
+          <div class="section-label">Manual Input</div>
+          <div class="input-group">
+            <label class="field-label" for="caseSelect">Case Type</label>
+            <select id="caseSelect" class="field-select">
+              <option value="">— Select Case —</option>
+              <option value="1">Case 1 — Parallel to HP &amp; VP</option>
+              <option value="2A">Case 2A — Perpendicular to HP</option>
+              <option value="2B">Case 2B — Perpendicular to VP</option>
+              <option value="3A">Case 3A — Inclined to HP, ∥ VP</option>
+              <option value="3B">Case 3B — Inclined to VP, ∥ HP</option>
+              <option value="4">Case 4 — Oblique (inclined to both)</option>
+              <option value="5">Case 5 — Profile Plane (θ+φ=90°)</option>
+            </select>
+          </div>
+
+          <!-- Dynamic input fields populated by buildInputsFor() -->
+          <div id="dynamicFields"></div>
+
+          <!-- Traces toggle -->
+          <div id="traceSection" class="toggle-row hidden" style="margin-top:8px;">
+            <label class="field-label" for="showTraces" style="margin-bottom:0;">Show Traces (HT/VT)</label>
+            <label class="toggle-switch">
+              <input type="checkbox" id="showTraces">
+              <span class="toggle-track"></span>
+            </label>
+          </div>
+
+          <button id="generateBtn" class="btn-primary" style="margin-top:10px;" disabled>Generate</button>
+        </div>
+
+        <!-- ── Quick Reference ─────────────────────────────── -->
+        <div class="input-section">
+          <div class="quick-ref">
+            <div class="qr-title">Quick Reference</div>
+            <div id="qrBody" class="qr-body">Select a case or parse a problem to see key projection rules.</div>
+          </div>
+        </div>
+
+      </div><!-- /panel-scroll -->
+    </aside>
+
+    <!-- ══════════════════════════════════════════════════════════
+       RIGHT PANEL — Canvas + Controls  (.canvas-panel in CSS)
+  ══════════════════════════════════════════════════════════ -->
+    <main class="canvas-panel">
+
+      <!-- Control bar (.control-bar in CSS) -->
+      <div class="control-bar">
+        <div class="step-group">
+          <button id="prevBtn" class="step-btn" disabled>◀ Prev</button>
+          <div class="step-counter">
+            <span id="stepCurrent">0</span><span class="step-sep">/</span><span id="stepTotal">0</span>
+          </div>
+          <button id="nextBtn" class="step-btn" disabled>Next ▶</button>
+        </div>
+        <div class="ctrl-group">
+          <button id="zoomInBtn" class="ctrl-btn" title="Zoom In">＋ Zoom</button>
+          <button id="zoomOutBtn" class="ctrl-btn" title="Zoom Out">－ Zoom</button>
+          <button id="fitBtn" class="ctrl-btn" title="Fit">⊡ Fit</button>
+          <button id="panBtn" class="ctrl-btn" title="Pan">✥ Pan</button>
+          <button id="resetBtn" class="ctrl-btn" title="Reset">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- Instruction bar (.instruction-bar in CSS) -->
+      <div class="instruction-bar">
+        <span id="instrTag" class="instr-step-tag">—</span>
+        <div class="instr-content">
+          <div id="instrTitle" class="instr-title">Projections of Straight Lines — Virtual Lab</div>
+          <div id="instrText" class="instr-text">Parse a problem or select a case to begin.</div>
+          <!-- Why? toggle -->
+          <div class="why-toggle" id="whyToggleRow" style="display:none;">
+            <input type="checkbox" id="whyCheck" onchange="toggleWhy()">
+            <label for="whyCheck">Why?</label>
+          </div>
+          <div id="whyText" class="why-text"></div>
+        </div>
+      </div>
+
+      <!-- Canvas area (.canvas-wrap in CSS) -->
+      <div id="canvasWrap" class="canvas-wrap">
+        <canvas id="lineCanvas"></canvas>
+        <div id="canvasHint" class="canvas-hint">
+          <span>📐</span>
+          Type a problem above and click <strong>Parse &amp; Draw</strong>,<br>
+          or select a case from the dropdown and click <strong>Generate</strong>.
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ── Disambiguation container (hidden, used by parser) ── -->
+  <div id="parserDisambigContainer"></div>
+
+  <!-- ════════════════════════════════════════════════════════════
+     SCRIPTS — load order matters
+════════════════════════════════════════════════════════════ -->
+
+  <!-- Parser pipeline -->
+  <script src="lines-parser-config.js"></script>
+  <script src="lines-parser-normalizer.js"></script>
+  <script src="lines-parser-extractor.js"></script>
+  <script src="lines-parser-classifier.js"></script>
+  <script src="lines-parser-validator.js"></script>
+  <script src="lines-parser-disambig.js"></script>
+  <script src="lines-parser-orchestrator.js"></script>
+
+  <!-- Drawing infrastructure -->
+  <script src="lines-proc-base.js"></script>
+  <script src="lines-core.js"></script>
+  <script src="lines-shared.js"></script>
+
+  <!-- Legacy case drawing (still used by manual dropdown) -->
+  <script src="lines-case1.js"></script>
+  <script src="lines-case2A.js"></script>
+  <script src="lines-case2B.js"></script>
+  <script src="lines-case3A.js"></script>
+  <script src="lines-case3B.js"></script>
+  <script src="lines-case4.js"></script>
+  <script src="lines-case5.js"></script>
+
+  <!-- PROC drawing procedures (new system) -->
+  <script src="lines-proc-group-a.js"></script>
+  <script src="lines-proc-group-b.js"></script>
+  <script src="lines-proc-group-c.js"></script>
+  <script src="lines-proc-group-d.js"></script>
+  <script src="lines-proc-group-e.js"></script>
+  <script src="lines-proc-group-f.js"></script>
+
+  <script>
+    // ─────────────────────────────────────────────────────────────
+    // NLP CONTROLLER (runs AFTER lines-core.js wires its own events)
+    // ─────────────────────────────────────────────────────────────
+
+    let parser = null;
+
+    window.addEventListener('load', () => {
+      // Boot parser
+      try {
+        parser = new ParserOrchestrator();
+        const disambig = new DisambiguationUI('parserDisambigContainer');
+        parser.setDisambiguationUI(disambig);
+        console.log('[✓] Parser ready — v4.0.0 Enterprise');
+      } catch (err) {
+        console.error('[✗] Parser boot error:', err);
+        showParseError('Parser failed to load: ' + err.message);
+      }
+    });
+
+    // ── NLP Parse & Draw ─────────────────────────────────────────
+    function parseAndDraw() {
+      const text = document.getElementById('nlpInput').value.trim();
+      if (!text) { alert('Please enter a problem description.'); return; }
+      if (!parser) { alert('Parser not loaded. Please refresh.'); return; }
+
+      let result;
+      try {
+        result = parser.parse(text);
+      } catch (err) {
+        showParseError('Parse error: ' + err.message);
+        return;
+      }
+
+      console.log('[Parse Result]', result);
+      renderParseResult(result);
+
+      if (!result.success) {
+        showParseError(result.error || 'Unknown parse error');
+        return;
+      }
+
+      if (!result.completeness || !result.completeness.sufficient) {
+        const missing = result.completeness?.missing?.join(', ') || 'unknown';
+        showParseWarn(`Insufficient data (${result.slotsConsumed || 0}/5 slots). Missing: ${missing}`);
+        return;
+      }
+
+      if (!result.procId) {
+        showParseWarn('Could not determine PROC-ID (confidence too low). Try rephrasing.');
+        return;
+      }
+
+      // Hand off to drawing system
+      setupCanvas();
+      loadFromProc(result.procId, result.constraints);
+
+      // Update quick reference
+      document.getElementById('qrBody').innerHTML =
+        `<strong>${result.procId}</strong> — ${getProcName(result.procId)}<br>` +
+        `<span style="color:var(--text-muted)">Confidence: ${Math.round((result.confidence || 0) * 100)}%</span>`;
+    }
+
+    // ── Render parser feedback card ───────────────────────────────
+    function renderParseResult(result) {
+      const card = document.getElementById('parseResult');
+      card.className = 'parse-result visible ' + (result.success ? 'ok' : 'err');
+
+      const c = result.constraints || {};
+      const slots = result.slotsConsumed || 0;
+      const conf = Math.round((result.confidence || 0) * 100);
+      const confClass = conf >= 80 ? 'conf-high' : conf >= 60 ? 'conf-mid' : 'conf-low';
+
+      document.getElementById('prProc').innerHTML =
+        result.procId
+          ? `✓ ${result.procId} — ${getProcName(result.procId)}`
+          : '⚠ PROC undetermined';
+
+      document.getElementById('prConf').innerHTML =
+        `<span class="conf-badge ${confClass}">${conf}% confidence</span>` +
+        (result.caseType ? `  Case: <strong>${result.caseType}</strong>` : '');
+
+      document.getElementById('prSlots').innerHTML =
+        `Slots: <span class="${slots >= 5 ? 'ok' : 'bad'}">${slots}/5</span>`;
+
+      // Show extracted values
+      const vals = [];
+      if (c.TL != null) vals.push(`TL=<span>${c.TL}mm</span>`);
+      if (c.theta != null) vals.push(`θ=<span>${c.theta}°</span>`);
+      if (c.phi != null) vals.push(`φ=<span>${c.phi}°</span>`);
+      if (c.h_A != null) vals.push(`h_A=<span>${c.h_A}mm</span>`);
+      if (c.d_A != null) vals.push(`d_A=<span>${c.d_A}mm</span>`);
+      if (c.h_B != null) vals.push(`h_B=<span>${c.h_B}mm</span>`);
+      if (c.d_B != null) vals.push(`d_B=<span>${c.d_B}mm</span>`);
+      if (c.L_TV != null) vals.push(`L_TV=<span>${c.L_TV}mm</span>`);
+      if (c.L_FV != null) vals.push(`L_FV=<span>${c.L_FV}mm</span>`);
+      if (c.delta_X != null) vals.push(`Δx=<span>${c.delta_X}mm</span>`);
+      if (c.special && c.special.length) vals.push(`flags=<span>${c.special.join(',')}</span>`);
+      document.getElementById('prVals').innerHTML = vals.join('  ');
+
+      document.getElementById('prWarn').textContent =
+        (result.completeness && !result.completeness.sufficient)
+          ? `⚠ Missing: ${(result.completeness.missing || []).join(', ')}`
+          : '';
+      document.getElementById('prReason').textContent = result.reasoning || '';
+    }
+
+    function showParseError(msg) {
+      const card = document.getElementById('parseResult');
+      card.className = 'parse-result visible err';
+      document.getElementById('prProc').textContent = '✗ ' + msg;
+      ['prConf', 'prSlots', 'prVals', 'prWarn', 'prReason'].forEach(id =>
+        document.getElementById(id).textContent = '');
+    }
+
+    function showParseWarn(msg) {
+      const card = document.getElementById('parseResult');
+      card.className = 'parse-result visible';
+      document.getElementById('prProc').textContent = '⚠ ' + msg;
+      ['prConf', 'prSlots', 'prVals', 'prWarn', 'prReason'].forEach(id =>
+        document.getElementById(id).textContent = '');
+    }
+
+    function clearNLP() {
+      document.getElementById('nlpInput').value = '';
+      document.getElementById('parseResult').className = 'parse-result';
+    }
+
+    // ── PROC name lookup ──────────────────────────────────────────
+    function getProcName(procId) {
+      const proc = (typeof PROC_REGISTRY !== 'undefined') && PROC_REGISTRY[procId];
+      if (proc && proc.name) return proc.name;
+      if (typeof ParserConfig !== 'undefined') {
+        const p = ParserConfig.getProcById(procId);
+        if (p) return p.name;
+      }
+      return procId;
+    }
+
+    // ── Why? toggle ───────────────────────────────────────────────
+    function toggleWhy() {
+      const el = document.getElementById('whyText');
+      el.classList.toggle('visible', document.getElementById('whyCheck').checked);
+    }
+
+    // ── Override updateInstructions to support Why? ───────────────
+    const _origUpdateInstructions = updateInstructions;
+    window.updateInstructions = function (tag, title, text, why) {
+      document.getElementById('instrTag').textContent = tag;
+      document.getElementById('instrTitle').textContent = title;
+      document.getElementById('instrText').textContent = text;
+
+      const whyRow = document.getElementById('whyToggleRow');
+      const whyText = document.getElementById('whyText');
+      const whyCheck = document.getElementById('whyCheck');
+
+      if (why) {
+        whyRow.style.display = 'flex';
+        whyText.textContent = why;
+        if (whyCheck.checked) whyText.classList.add('visible');
+        else whyText.classList.remove('visible');
+      } else {
+        whyRow.style.display = 'none';
+        whyText.classList.remove('visible');
+        whyText.textContent = '';
+      }
+    };
+
+    // ── Extra keyboard shortcuts (non-input) ──────────────────────
+    window.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'r' || e.key === 'R') document.getElementById('resetBtn').click();
+    });
+  </script>
+
+</body>
+
+</html>

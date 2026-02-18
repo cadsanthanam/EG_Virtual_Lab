@@ -18,7 +18,9 @@ const state = {
     edgeAngle: 30, // Default edge angle for Case A
     axisAngleHP: 0,
     axisAngleVP: 0,
-    restingOn: '',
+    restingOn: '',        // Case C/D resting condition
+    restingOnB: '',       // Case B resting condition
+    caseBAlpha: 0,        // Case B alpha angle (user-specified or auto-computed)
     lateralFaceAngle: 0,
     baseEdgeAngle: 0,
     currentStep: 0,
@@ -149,8 +151,9 @@ function updateDynamicInputs() {
             break;
 
         case 'B':
-            // Axis perpendicular to VP — resting inputs are Case B specific (TODO when implementing Case B)
-            addInput(container, 'axisAngleVP', 'Axis Inclination with VP (°):', 'number', 0, 90, 0);
+            // Axis perpendicular to VP — true shape in FV
+            // Resting condition determines the alpha angle (orientation of polygon in FV)
+            addRestingInputCaseB(container, isPrism, isPyramid);
             break;
 
         case 'C':
@@ -160,10 +163,10 @@ function updateDynamicInputs() {
             break;
 
         case 'D':
-            // Axis inclined to VP
-            addInput(container, 'axisAngleHP', 'Axis Inclination with HP (°):', 'number', 0, 90, 45);
-            addInput(container, 'axisAngleVP', 'Axis Inclination with VP (°):', 'number', 0, 90, 45);
-            addRestingInputCaseC(container);
+            // Axis inclined to VP — Phase I follows Case B, Phase II tilts the TV
+            // Inputs: same resting condition as Case B + the VP inclination angle (phi)
+            addRestingInputCaseB(container, isPrism, isPyramid);
+            addInput(container, 'axisAngleVP', 'Axis Inclination with VP φ (°):', 'number', 1, 89, 45);
             break;
     }
 }
@@ -203,6 +206,76 @@ function addRestingInputCaseC(container) {
         document.getElementById('restingOn').addEventListener('change', (e) => {
             state.restingOn = e.target.value;
         });
+    }, 0);
+}
+
+// ========================================
+// Case B resting input — prism or pyramid, with conditional alpha angle input
+// ========================================
+function addRestingInputCaseB(container, isPrism, isPyramid) {
+    const div = document.createElement('div');
+    div.className = 'input-group';
+
+    let options = '';
+    if (isPrism) {
+        options = `
+            <option value="rectangular-face">Resting on Rectangular Face (α=0°)</option>
+            <option value="longer-edge-equal">Longer Edge – Faces Equally Inclined to HP</option>
+            <option value="longer-edge-angle">Longer Edge – Face at Specific Angle to HP</option>
+        `;
+    } else if (isPyramid) {
+        options = `
+            <option value="base-edge">Resting on Base Edge (α=0°)</option>
+            <option value="base-corner-equal">Base Corner – Edges Equally Inclined to HP</option>
+            <option value="base-corner-angle">Base Corner – Edge at Specific Angle to HP</option>
+        `;
+    } else {
+        return; // Cone/Cylinder — no resting dropdown needed
+    }
+
+    div.innerHTML = `
+        <label for="restingOnB">Resting On:</label>
+        <select id="restingOnB" class="input-field">${options}</select>
+    `;
+    container.appendChild(div);
+
+    const alphaContainer = document.createElement('div');
+    alphaContainer.id = 'caseBAlphaContainer';
+    container.appendChild(alphaContainer);
+
+    function updateAlphaInput(restingValue) {
+        alphaContainer.innerHTML = '';
+        if (restingValue === 'longer-edge-angle' || restingValue === 'base-corner-angle') {
+            const alphaDiv = document.createElement('div');
+            alphaDiv.className = 'input-group';
+            alphaDiv.innerHTML = `
+                <label for="caseBAlpha">Face/Edge Angle with HP (α°):</label>
+                <input type="number" id="caseBAlpha" class="input-field"
+                       min="0" max="90" value="30" placeholder="30">
+            `;
+            alphaContainer.appendChild(alphaDiv);
+            setTimeout(() => {
+                const el = document.getElementById('caseBAlpha');
+                if (el) {
+                    state.caseBAlpha = parseFloat(el.value) || 30;
+                    el.addEventListener('input', (e) => {
+                        state.caseBAlpha = parseFloat(e.target.value) || 0;
+                    });
+                }
+            }, 0);
+        } else {
+            state.caseBAlpha = 0;
+        }
+        state.restingOnB = restingValue;
+    }
+
+    setTimeout(() => {
+        const sel = document.getElementById('restingOnB');
+        if (sel) {
+            state.restingOnB = sel.value;
+            updateAlphaInput(sel.value);
+            sel.addEventListener('change', (e) => updateAlphaInput(e.target.value));
+        }
     }, 0);
 }
 
@@ -326,7 +399,7 @@ function generateProjection() {
 }
 
 function syncDynamicInputs() {
-    // Read all dynamically created input values into state
+    // Read all dynamically created numeric input values into state
     const dynamicFields = ['edgeAngle', 'axisAngleHP', 'axisAngleVP', 'lateralFaceAngle', 'baseEdgeAngle'];
     for (const field of dynamicFields) {
         const el = document.getElementById(field);
@@ -334,14 +407,19 @@ function syncDynamicInputs() {
             state[field] = parseFloat(el.value) || 0;
         }
     }
-    // Also sync base inputs
+    // Base inputs
     const baseEdgeEl = document.getElementById('baseEdge');
     const axisLengthEl = document.getElementById('axisLength');
     if (baseEdgeEl) state.baseEdge = parseFloat(baseEdgeEl.value) || 40;
     if (axisLengthEl) state.axisLength = parseFloat(axisLengthEl.value) || 80;
-    // Sync select
+    // Case C/D resting select
     const restingEl = document.getElementById('restingOn');
     if (restingEl) state.restingOn = restingEl.value;
+    // Case B resting select + optional alpha
+    const restingBEl = document.getElementById('restingOnB');
+    if (restingBEl) state.restingOnB = restingBEl.value;
+    const caseBAlphaEl = document.getElementById('caseBAlpha');
+    if (caseBAlphaEl) state.caseBAlpha = parseFloat(caseBAlphaEl.value) || 0;
 }
 
 function initializeSteps() {
@@ -589,6 +667,8 @@ function resetAll() {
     state.axisAngleHP = 0;
     state.axisAngleVP = 0;
     state.restingOn = '';
+    state.restingOnB = '';
+    state.caseBAlpha = 0;
     state.lateralFaceAngle = 0;
     state.baseEdgeAngle = 0;
     state.currentStep = 0;
