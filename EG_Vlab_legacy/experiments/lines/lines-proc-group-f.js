@@ -53,8 +53,8 @@ function basicEndpointProc(procId, procName, computeFn) {
                     Draw.projectors(xA, yA, yAp, bX, bY, bpY);
                     Draw.finalViews(xA, yA, yAp, bpX, bY, bpY);
                     const rotX = xA + TL;
-                    drawArc(xA, yAp, L_FV, 0, 45, cfg.arcColor, 1.0, [3, 3]);
-                    drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                    drawArc(xA, yAp, L_FV, 0, 45, cfg.arcColor, 1.0, []);
+                    drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, []);
                     drawDimension(xA, yAp, rotX, yAp, `TL=${TL.toFixed(1)}mm`);
                     updateInstructions('Step 5', 'Find TL by rotation',
                         `TL = ${TL.toFixed(1)}mm`, '');
@@ -308,7 +308,7 @@ registerProc('PROC-26', {
                 Draw.projectors(xA, yA, yAp, bX, bY, bpY);
                 Draw.finalViews(xA, yA, yAp, bpX, bY, bpY);
                 const rotX = xA + TL;
-                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, []);
                 drawDimension(xA, yAp, rotX, yAp, `TL=${TL.toFixed(1)}mm`);
                 updateInstructions('Step 7', 'Find TL',
                     `TL = ${TL.toFixed(1)}mm`, '');
@@ -357,12 +357,12 @@ registerProc('PROC-27', {
                 Draw.finalViews(xA, yA, yAp, bpX, bY, bpY);
                 // Draw traces
                 if (traces.HT) {
-                    drawLine(xA, yAp, traces.HT.x, 0, cfg.dimColor, 0.8, [3, 3]);
+                    drawLine(xA, yAp, traces.HT.x, 0, cfg.dimColor, 0.8, []);
                     drawPoint(traces.HT.x, 0, '#e8a000', 5);
                     drawLabel('HT', traces.HT.x, 0, '#e8a000', { dx: 0, dy: -10 });
                 }
                 if (traces.VT) {
-                    drawLine(xA, yA, traces.VT.x, 0, cfg.dimColor, 0.8, [3, 3]);
+                    drawLine(xA, yA, traces.VT.x, 0, cfg.dimColor, 0.8, []);
                     drawPoint(traces.VT.x, 0, '#bc8cff', 5);
                     drawLabel('VT', traces.VT.x, 0, '#bc8cff', { dx: 0, dy: 8 });
                 }

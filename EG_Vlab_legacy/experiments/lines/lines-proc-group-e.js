@@ -94,8 +94,8 @@ registerProc('PROC-16', {
                 Draw.projectors(xA, yA, yAp, bX, bY, bpY);
                 Draw.finalViews(xA, yA, yAp, bpX, bY, bpY);
                 const rotX = xA + TL;
-                drawArc(xA, yAp, L_FV, 0, 45, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                drawArc(xA, yAp, L_FV, 0, 45, cfg.arcColor, 1.0, []);
+                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, []);
                 drawDimension(xA, yAp, rotX, yAp, `TL=${TL.toFixed(1)}mm`);
                 updateInstructions('Step 6', 'Find TL by rotation',
                     `Rotate FV to horizontal → TL = ${TL.toFixed(1)}mm`,
@@ -209,7 +209,7 @@ registerProc('PROC-17', {
                 Draw.projectors(xA, yA, yAp, bX, bY, bpY);
                 Draw.finalViews(xA, yA, yAp, bpX, bY, bpY);
                 const rotX = xA + TL;
-                drawLine(xA, yA, rotX, yA, cfg.dimColor, 0.8, [2, 3]);
+                drawLine(xA, yA, rotX, yA, cfg.dimColor, 0.8, []);
                 drawDimension(xA, yA, rotX, yA, `TL=${TL.toFixed(1)}mm`);
                 updateInstructions('Step 6', 'Find TL by rotation',
                     `TL = ${TL.toFixed(1)}mm`, '');
@@ -330,7 +330,7 @@ registerProc('PROC-18', {
                 Draw.projectors(xA, yA, yAp, bX, bY, bpY);
                 Draw.finalViews(xA, yA, yAp, bpX, bY, bpY);
                 const rotX = xA + TL;
-                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, []);
                 drawDimension(xA, yAp, rotX, yAp, `TL=${TL.toFixed(1)}mm`);
                 updateInstructions('Step 7', 'Verify TL',
                     `TL = ${TL.toFixed(1)}mm (given, verified)`, '');
@@ -434,7 +434,7 @@ registerProc('PROC-19', {
                 Draw.projectors(xA, yA, yAp, bX, bY, bpY);
                 Draw.finalViews(xA, yA, yAp, bpX, bY, bpY);
                 const rotX = xA + TL;
-                drawLine(xA, yA, rotX, yA, cfg.dimColor, 0.8, [2, 3]);
+                drawLine(xA, yA, rotX, yA, cfg.dimColor, 0.8, []);
                 drawDimension(xA, yA, rotX, yA, `TL=${TL}mm`);
                 updateInstructions('Step 7', 'Verify TL',
                     `TL = ${TL}mm (given, verified)`, '');
@@ -501,7 +501,7 @@ registerProc('PROC-20', {
             case 3:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
                 // Arc from a with radius TL
-                drawArc(xA, yAp, TL, 0, 90, cfg.arcColor, 1.0, [3, 3]);
+                drawArc(xA, yAp, TL, 0, 90, cfg.arcColor, 1.0, []);
                 updateInstructions('Step 3', 'Swing TL arc from a\'',
                     `Arc centre a', radius = TL = ${TL}mm`,
                     'TL² = Δx² + Δh² + Δd². Since we know Δh and Δd, Δx = √(TL² - Δh² - Δd²) = ' + deltaX.toFixed(1) + 'mm');
@@ -537,7 +537,7 @@ registerProc('PROC-20', {
                 Draw.projectors(xA, yA, yAp, bX, bY, bpY);
                 Draw.finalViews(xA, yA, yAp, bpX, bY, bpY);
                 const rotX = xA + TL;
-                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, []);
                 drawDimension(xA, yAp, rotX, yAp, `TL=${TL}mm`);
                 updateInstructions('Step 7', 'Verify TL',
                     `TL = ${TL}mm (given, verified by construction)`, '');

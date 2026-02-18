@@ -124,7 +124,7 @@ registerProc('PROC-01', {
                 base();
                 Draw.locus(xA - 5, xMax, locusYFV);
                 Draw.locus(xA - 5, xMax, locusYTV);
-                drawArc(xA, yAp, fvLen, 0, alpha + 15, cfg.arcColor, 1.0, [3, 3]);
+                drawArc(xA, yAp, fvLen, 0, alpha + 15, cfg.arcColor, 1.0, []);
                 drawLine(xA, yAp, bpX, bpY, cfg.fvColor, cfg.finalWidth);
                 drawPoint(bpX, bpY, cfg.fvColor, 4); drawLabel("b'", bpX, bpY, cfg.fvColor, { dx: 6, dy: 0 });
                 updateInstructions('Step 7', "Locate b' — Final Front View",
@@ -141,7 +141,7 @@ registerProc('PROC-01', {
                 Draw.locus(xA - 5, xMax, locusYTV);
                 drawLine(xA, yAp, bpX, bpY, cfg.fvColor, cfg.finalWidth);
                 drawProjector(bpX, bpY, bY - 5);
-                drawArc(xA, yA, tvLen, -beta - 15, 0, cfg.arcColor, 1.0, [3, 3]);
+                drawArc(xA, yA, tvLen, -beta - 15, 0, cfg.arcColor, 1.0, []);
                 drawLine(xA, yA, bX, bY, cfg.tvColor, cfg.finalWidth);
                 drawPoint(bpX, bpY, cfg.fvColor, 4); drawLabel("b'", bpX, bpY, cfg.fvColor, { dx: 6, dy: 0 });
                 drawPoint(bX, bY, cfg.tvColor, 4); drawLabel('b', bX, bY, cfg.tvColor, { dx: 6, dy: 4 });
@@ -294,7 +294,7 @@ registerProc('PROC-02', {
                 base();
                 Draw.locus(xMin, xB + 5, locusYFV);
                 Draw.locus(xMin, xB + 5, locusYTV);
-                drawArc(xB, yBp, fvLen, 180 - alpha - 15, 180, cfg.arcColor, 1.0, [3, 3]);
+                drawArc(xB, yBp, fvLen, 180 - alpha - 15, 180, cfg.arcColor, 1.0, []);
                 drawLine(apX, apY, xB, yBp, cfg.fvColor, cfg.finalWidth);
                 drawPoint(apX, apY, cfg.fvColor, 4); drawLabel("a'", apX, apY, cfg.fvColor, { dx: -10, dy: 0 });
                 updateInstructions('Step 7', "Locate a' — Final Front View",
@@ -308,7 +308,7 @@ registerProc('PROC-02', {
                 Draw.locus(xMin, xB + 5, locusYTV);
                 drawLine(apX, apY, xB, yBp, cfg.fvColor, cfg.finalWidth);
                 drawProjector(apX, apY, aY - 5);
-                drawArc(xB, yB, tvLen, 180, 180 + beta + 15, cfg.arcColor, 1.0, [3, 3]);
+                drawArc(xB, yB, tvLen, 180, 180 + beta + 15, cfg.arcColor, 1.0, []);
                 drawLine(aX, aY, xB, yB, cfg.tvColor, cfg.finalWidth);
                 drawPoint(apX, apY, cfg.fvColor, 4); drawLabel("a'", apX, apY, cfg.fvColor, { dx: -10, dy: 0 });
                 drawPoint(aX, aY, cfg.tvColor, 4); drawLabel('a', aX, aY, cfg.tvColor, { dx: -9, dy: 0 });
@@ -429,9 +429,9 @@ registerProc('PROC-03', {
                 base();
                 Draw.locus(xM - 5, xM + TL, half.locusYFV);
                 Draw.locus(xM - 5, xM + TL, half.locusYTV);
-                drawArc(xM, yMp, half.fvLen, 0, half.alpha + 15, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xM, yMp, half.bpX, half.bpY, cfg.fvColor, 1.5, [3, 3]);
-                drawLine(xM, yM, half.bX, half.bY, cfg.tvColor, 1.5, [3, 3]);
+                drawArc(xM, yMp, half.fvLen, 0, half.alpha + 15, cfg.arcColor, 1.0, []);
+                drawLine(xM, yMp, half.bpX, half.bpY, cfg.fvColor, 1.5, []);
+                drawLine(xM, yM, half.bX, half.bY, cfg.tvColor, 1.5, []);
                 drawPoint(half.bpX, half.bpY, cfg.fvColor, 4); drawLabel("b'", half.bpX, half.bpY, cfg.fvColor, { dx: 6, dy: 0 });
                 drawPoint(half.bX, half.bY, cfg.tvColor, 4); drawLabel('b', half.bX, half.bY, cfg.tvColor, { dx: 6, dy: 4 });
                 updateInstructions('Step 5', 'Locate B from M',
@@ -443,16 +443,16 @@ registerProc('PROC-03', {
                 base();
                 Draw.locus(xM - TL, xM + 5, half.locusYFV);
                 Draw.locus(xM - TL, xM + 5, half.locusYTV);
-                drawArc(xM, yMp, half.fvLen, 180 - half.alpha - 15, 180, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xM, yMp, half.bpX, half.bpY, cfg.fvColor, 1.5, [3, 3]);
-                drawLine(xM, yM, half.bX, half.bY, cfg.tvColor, 1.5, [3, 3]);
+                drawArc(xM, yMp, half.fvLen, 180 - half.alpha - 15, 180, cfg.arcColor, 1.0, []);
+                drawLine(xM, yMp, half.bpX, half.bpY, cfg.fvColor, 1.5, []);
+                drawLine(xM, yM, half.bX, half.bY, cfg.tvColor, 1.5, []);
                 drawPoint(half.bpX, half.bpY, cfg.fvColor, 3);
                 // A is mirror of B about M
                 const apX2 = 2 * xM - half.bpX, apY2 = 2 * yMp - half.bpY;
                 const aX2 = 2 * xM - half.bX, aY2 = 2 * yM - half.bY;
-                drawArc(xM, yMp, half.fvLen, 180, 180 + half.alpha + 15, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xM, yMp, apX2, apY2, cfg.fvColor, 1.5, [3, 3]);
-                drawLine(xM, yM, aX2, aY2, cfg.tvColor, 1.5, [3, 3]);
+                drawArc(xM, yMp, half.fvLen, 180, 180 + half.alpha + 15, cfg.arcColor, 1.0, []);
+                drawLine(xM, yMp, apX2, apY2, cfg.fvColor, 1.5, []);
+                drawLine(xM, yM, aX2, aY2, cfg.tvColor, 1.5, []);
                 drawPoint(apX2, apY2, cfg.fvColor, 4); drawLabel("a'", apX2, apY2, cfg.fvColor, { dx: -10, dy: 0 });
                 drawPoint(aX2, aY2, cfg.tvColor, 4); drawLabel('a', aX2, aY2, cfg.tvColor, { dx: -9, dy: 0 });
                 updateInstructions('Step 6', 'Locate A — Mirror of B about M',

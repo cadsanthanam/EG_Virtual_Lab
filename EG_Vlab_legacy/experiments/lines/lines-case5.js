@@ -51,8 +51,8 @@ function drawCase5(step) {
     case 3:
       drawXYLine();
       drawProjector(xP, yP - 8, yPp + 8);
-      drawLine(xP, yPp, q1pX, q1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xP, yP, q1X, q1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xP, yPp, q1pX, q1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xP, yP, q1X, q1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(q1pX, q1pY, yP - 3);
       drawPoint(xP, yP, cfg.tvColor); drawLabel('p', xP, yP, cfg.tvColor, { dx: -9, dy: 0 });
       drawPoint(xP, yPp, cfg.fvColor); drawLabel("p'", xP, yPp, cfg.fvColor, { dx: -10, dy: 0 });
@@ -66,11 +66,11 @@ function drawCase5(step) {
     case 4:
       drawXYLine();
       drawProjector(xP, yP - 8, yPp + 8);
-      drawLine(xP, yPp, q1pX, q1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xP, yP, q1X, q1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xP, yPp, q1pX, q1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xP, yP, q1X, q1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(q1pX, q1pY, yP - 3);
-      drawLine(xP, yP, q2X, q2Y, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xP, yPp, q2pX, q2pY, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xP, yP, q2X, q2Y, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xP, yPp, q2pX, q2pY, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(q2X, q2Y, yPp + 3);
       drawPoint(xP, yP, cfg.tvColor); drawLabel('p', xP, yP, cfg.tvColor, { dx: -9, dy: 0 });
       drawPoint(xP, yPp, cfg.fvColor); drawLabel("p'", xP, yPp, cfg.fvColor, { dx: -10, dy: 0 });
@@ -88,8 +88,8 @@ function drawCase5(step) {
       drawXYLine();
       drawProjector(xP, yP - 8, yPp + 8);
       // Construction (light)
-      drawLine(xP, yPp, q1pX, q1pY, cfg.constructionColor, 0.7, [4, 4]);
-      drawLine(xP, yP, q2X, q2Y, cfg.constructionColor, 0.7, [4, 4]);
+      drawLine(xP, yPp, q1pX, q1pY, cfg.constructionColor, 0.7, []);
+      drawLine(xP, yP, q2X, q2Y, cfg.constructionColor, 0.7, []);
       // Final perpendicular projections
       drawLine(xP, yP, qX, qY, cfg.tvColor, cfg.finalWidth);
       drawLine(xP, yPp, qpX, qpY, cfg.fvColor, cfg.finalWidth);

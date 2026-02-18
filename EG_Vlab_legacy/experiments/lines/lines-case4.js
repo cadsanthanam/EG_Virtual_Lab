@@ -65,7 +65,7 @@ function drawCase4(step) {
 
     case 2:
       drawBase();
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
       drawPoint(b1pX, b1pY, cfg.dimColor, 3); drawLabel("b\u2081'", b1pX, b1pY, cfg.dimColor, { dx: 6, dy: 0 });
       drawAngleArc(xA, yAp, theta, 12, cfg.dimColor);
       updateInstructions('Step 2', 'Assume Line Inclined to HP Only (Parallel to VP)',
@@ -74,8 +74,8 @@ function drawCase4(step) {
 
     case 3:
       drawBase();
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b1pX, b1pY, yA - 5);
       drawPoint(b1pX, b1pY, cfg.dimColor, 3); drawLabel("b\u2081'", b1pX, b1pY, cfg.dimColor, { dx: 6, dy: 0 });
       drawPoint(b1X, b1Y, cfg.tvColor, 3); drawLabel('b\u2081', b1X, b1Y, cfg.tvColor, { dx: 6, dy: 0 });
@@ -86,10 +86,10 @@ function drawCase4(step) {
 
     case 4:
       drawBase();
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b1pX, b1pY, yA - 5);
-      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, [4, 3]);
+      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, []);
       drawPoint(b1pX, b1pY, cfg.dimColor, 3); drawLabel("b\u2081'", b1pX, b1pY, cfg.dimColor, { dx: 6, dy: 0 });
       drawPoint(b1X, b1Y, cfg.tvColor, 3); drawLabel('b\u2081', b1X, b1Y, cfg.tvColor, { dx: 6, dy: 0 });
       drawPoint(b2X, b2Y, cfg.tvColor, 3); drawLabel('b\u2082', b2X, b2Y, cfg.tvColor, { dx: 6, dy: 4 });
@@ -100,11 +100,11 @@ function drawCase4(step) {
 
     case 5:
       drawBase();
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b1pX, b1pY, yA - 5);
-      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b2X, b2Y, yAp + 5);
       drawPoint(b1pX, b1pY, cfg.dimColor, 3); drawLabel("b\u2081'", b1pX, b1pY, cfg.dimColor, { dx: 6, dy: 0 });
       drawPoint(b1X, b1Y, cfg.tvColor, 3); drawLabel('b\u2081', b1X, b1Y, cfg.tvColor, { dx: 6, dy: 0 });
@@ -119,11 +119,11 @@ function drawCase4(step) {
     case 6:
       drawBase();
       // ── Persist Phase I construction ──
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b1pX, b1pY, yA - 5);
-      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b2X, b2Y, yAp + 5);
       drawAngleArc(xA, yAp, theta, 12, cfg.dimColor);
       drawAngleArc(xA, yA, phi, 12, cfg.dimColor, 'down');
@@ -141,11 +141,11 @@ function drawCase4(step) {
     case 7:
       drawBase();
       // ── Persist Phase I construction ──
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b1pX, b1pY, yA - 5);
-      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b2X, b2Y, yAp + 5);
       drawAngleArc(xA, yAp, theta, 12, cfg.dimColor);
       drawAngleArc(xA, yA, phi, 12, cfg.dimColor, 'down');
@@ -157,7 +157,7 @@ function drawCase4(step) {
       drawLine(xA - 5, locusYFV, xMax, locusYFV, cfg.locusColor, cfg.dimWidth, []);
       drawLine(xA - 5, locusYTV, xMax, locusYTV, cfg.locusColor, cfg.dimWidth, []);
       // ── New: Arc + final FV ──
-      drawArc(xA, yAp, fvLen, 0, alpha + 15, cfg.arcColor, 1.0, [3, 3]);
+      drawArc(xA, yAp, fvLen, 0, alpha + 15, cfg.arcColor, 1.0, []);
       drawLine(xA, yAp, bpX, bpY, cfg.fvColor, cfg.finalWidth);
       drawPoint(bpX, bpY, cfg.fvColor, 4); drawLabel("b'", bpX, bpY, cfg.fvColor, { dx: 6, dy: 0 });
       updateInstructions('Step 7', "Locate b' Using Front View Length",
@@ -167,11 +167,11 @@ function drawCase4(step) {
     case 8:
       drawBase();
       // ── Persist Phase I construction ──
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b1pX, b1pY, yA - 5);
-      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b2X, b2Y, yAp + 5);
       drawAngleArc(xA, yAp, theta, 12, cfg.dimColor);
       drawAngleArc(xA, yA, phi, 12, cfg.dimColor, 'down');
@@ -183,12 +183,12 @@ function drawCase4(step) {
       drawLine(xA - 5, locusYFV, xMax, locusYFV, cfg.locusColor, cfg.dimWidth, []);
       drawLine(xA - 5, locusYTV, xMax, locusYTV, cfg.locusColor, cfg.dimWidth, []);
       // ── Persist FV final + arc ──
-      drawArc(xA, yAp, fvLen, 0, alpha + 15, cfg.arcColor, 1.0, [3, 3]);
+      drawArc(xA, yAp, fvLen, 0, alpha + 15, cfg.arcColor, 1.0, []);
       drawLine(xA, yAp, bpX, bpY, cfg.fvColor, cfg.finalWidth);
       drawPoint(bpX, bpY, cfg.fvColor, 4); drawLabel("b'", bpX, bpY, cfg.fvColor, { dx: 6, dy: 0 });
       // ── New: Projector from b', arc + final TV ──
       drawProjector(bpX, bpY, bY - 5);
-      drawArc(xA, yA, tvLen, -beta - 15, 0, cfg.arcColor, 1.0, [3, 3]);
+      drawArc(xA, yA, tvLen, -beta - 15, 0, cfg.arcColor, 1.0, []);
       drawLine(xA, yA, bX, bY, cfg.tvColor, cfg.finalWidth);
       drawPoint(bX, bY, cfg.tvColor, 4); drawLabel('b', bX, bY, cfg.tvColor, { dx: 6, dy: 4 });
       updateInstructions('Step 8', 'Locate b Using Top View Length',
@@ -198,11 +198,11 @@ function drawCase4(step) {
     case 9:
       drawBase();
       // ── Persist Phase I construction (lighter) ──
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b1pX, b1pY, yA - 5);
-      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b2X, b2Y, yAp + 5);
       drawPoint(b1pX, b1pY, cfg.dimColor, 3); drawLabel("b\u2081'", b1pX, b1pY, cfg.dimColor, { dx: 6, dy: 0 });
       drawPoint(b1X, b1Y, cfg.dimColor, 3); drawLabel('b\u2081', b1X, b1Y, cfg.dimColor, { dx: 6, dy: 0 });
@@ -224,11 +224,11 @@ function drawCase4(step) {
     case 10:
       drawBase();
       // ── Persist Phase I construction ──
-      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yAp, b1pX, b1pY, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yA, b1X, b1Y, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b1pX, b1pY, yA - 5);
-      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, [4, 3]);
-      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, [3, 3]);
+      drawLine(xA, yA, b2X, b2Y, cfg.constructionColor, cfg.consWidth, []);
+      drawLine(xA, yAp, b2pX, b2pY, cfg.constructionColor, cfg.consWidth, []);
       drawProjector(b2X, b2Y, yAp + 5);
       drawPoint(b1pX, b1pY, cfg.dimColor, 3); drawLabel("b\u2081'", b1pX, b1pY, cfg.dimColor, { dx: 6, dy: 0 });
       drawPoint(b1X, b1Y, cfg.dimColor, 3); drawLabel('b\u2081', b1X, b1Y, cfg.dimColor, { dx: 6, dy: 0 });

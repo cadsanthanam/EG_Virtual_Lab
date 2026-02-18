@@ -53,7 +53,7 @@ registerProc('PROC-13', {
             case 3:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
                 drawProjector(xProj, yA - 30, yAp + 30);
-                drawArc(xA, yA, L_TV, -90, 0, cfg.tvColor, 1.0, [4, 3]);
+                drawArc(xA, yA, L_TV, -90, 0, cfg.tvColor, 1.0, []);
                 updateInstructions('Step 3', 'Arc from a — TV radius',
                     `From a, draw arc radius = L_TV = ${c.L_TV}mm`,
                     'b must be at distance L_TV from a. The arc shows all possible positions for b.');
@@ -61,7 +61,7 @@ registerProc('PROC-13', {
             case 4:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
                 drawProjector(xProj, yA - 30, yAp + 30);
-                drawArc(xA, yA, L_TV, -90, 0, cfg.tvColor, 1.0, [4, 3]);
+                drawArc(xA, yA, L_TV, -90, 0, cfg.tvColor, 1.0, []);
                 drawPoint(bX, bY, cfg.tvColor); drawLabel('b', bX, bY, cfg.tvColor, { dx: 6, dy: 4 });
                 updateInstructions('Step 4', 'b at intersection of arc and projector',
                     `b is where the TV arc meets the projector of B`,
@@ -72,7 +72,7 @@ registerProc('PROC-13', {
                 drawProjector(xProj, yA - 30, yAp + 30);
                 drawLine(xA, yA, bX, bY, cfg.tvColor, cfg.finalWidth);
                 drawPoint(bX, bY, cfg.tvColor); drawLabel('b', bX, bY, cfg.tvColor, { dx: 6, dy: 4 });
-                drawArc(xA, yAp, L_FV, 0, 90, cfg.fvColor, 1.0, [4, 3]);
+                drawArc(xA, yAp, L_FV, 0, 90, cfg.fvColor, 1.0, []);
                 updateInstructions('Step 5', 'Arc from a\' — FV radius',
                     `From a', draw arc radius = L_FV = ${c.L_FV}mm`,
                     'Similarly, b\' must be at distance L_FV from a\'. The arc shows all possible positions.');
@@ -81,7 +81,7 @@ registerProc('PROC-13', {
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
                 drawProjector(xProj, yA - 30, yAp + 30);
                 drawLine(xA, yA, bX, bY, cfg.tvColor, cfg.finalWidth);
-                drawArc(xA, yAp, L_FV, 0, 90, cfg.fvColor, 1.0, [4, 3]);
+                drawArc(xA, yAp, L_FV, 0, 90, cfg.fvColor, 1.0, []);
                 drawPoint(bX, bY, cfg.tvColor); drawLabel('b', bX, bY, cfg.tvColor, { dx: 6, dy: 4 });
                 drawPoint(bpX, bpY, cfg.fvColor); drawLabel("b'", bpX, bpY, cfg.fvColor, { dx: 6, dy: -4 });
                 updateInstructions('Step 6', 'b\' at intersection of arc and projector',
@@ -101,8 +101,8 @@ registerProc('PROC-13', {
                 drawProjector(xProj, bY - 5, bpY + 5);
                 Draw.finalViews(xA, yA, yAp, bX, bY, bpY);
                 const rotX = xA + TL;
-                drawArc(xA, yAp, L_FV, 0, 45, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                drawArc(xA, yAp, L_FV, 0, 45, cfg.arcColor, 1.0, []);
+                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, []);
                 drawPoint(rotX, yAp, cfg.dimColor, 3);
                 drawDimension(xA, yAp, rotX, yAp, `TL=${TL.toFixed(1)}mm`);
                 updateInstructions('Step 8', 'Find TL by rotation',
@@ -203,7 +203,7 @@ registerProc('PROC-14', {
                 break;
             case 2:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, [4, 3]);
+                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, []);
                 drawPoint(b1X, yA, cfg.tvColor); drawLabel('b₁', b1X, yA, cfg.tvColor, { dx: 6, dy: 0 });
                 updateInstructions('Step 2', 'Draw TV horizontally',
                     `ab₁ = L_TV = ${c.L_TV}mm (horizontal from a)`,
@@ -211,9 +211,9 @@ registerProc('PROC-14', {
                 break;
             case 3:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, [4, 3]);
+                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, []);
                 drawPoint(b1X, yA, cfg.tvColor); drawLabel('b₁', b1X, yA, cfg.tvColor, { dx: 6, dy: 0 });
-                drawLine(xA, yAp, b1pX, yAp, cfg.fvColor, 1.0, [4, 3]);
+                drawLine(xA, yAp, b1pX, yAp, cfg.fvColor, 1.0, []);
                 drawPoint(b1pX, yAp, cfg.fvColor); drawLabel("b₁'", b1pX, yAp, cfg.fvColor, { dx: 6, dy: 0 });
                 updateInstructions('Step 3', 'Draw FV horizontally',
                     `a'b₁' = L_FV = ${c.L_FV}mm (horizontal from a')`,
@@ -221,29 +221,29 @@ registerProc('PROC-14', {
                 break;
             case 4:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, [4, 3]);
-                drawLine(xA, yAp, b1pX, yAp, cfg.fvColor, 1.0, [4, 3]);
-                drawArc(xA, yAp, L_FV, 0, 60, cfg.arcColor, 1.0, [3, 3]);
+                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, []);
+                drawLine(xA, yAp, b1pX, yAp, cfg.fvColor, 1.0, []);
+                drawArc(xA, yAp, L_FV, 0, 60, cfg.arcColor, 1.0, []);
                 updateInstructions('Step 4', 'Swing FV arc from a\'',
                     `Arc centre a', radius = L_FV = ${c.L_FV}mm`,
                     'The locus of b\' is on this arc. The actual b\' is where this arc meets the projector from the TV construction.');
                 break;
             case 5:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, [4, 3]);
-                drawLine(xA, yAp, b1pX, yAp, cfg.fvColor, 1.0, [4, 3]);
-                drawArc(xA, yAp, L_FV, 0, 60, cfg.arcColor, 1.0, [3, 3]);
-                drawArc(xA, yA, L_TV, -60, 0, cfg.arcColor, 1.0, [3, 3]);
+                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, []);
+                drawLine(xA, yAp, b1pX, yAp, cfg.fvColor, 1.0, []);
+                drawArc(xA, yAp, L_FV, 0, 60, cfg.arcColor, 1.0, []);
+                drawArc(xA, yA, L_TV, -60, 0, cfg.arcColor, 1.0, []);
                 updateInstructions('Step 5', 'Swing TV arc from a',
                     `Arc centre a, radius = L_TV = ${c.L_TV}mm`,
                     'The locus of b is on this arc. Combined with the FV arc, we can find the intersection that satisfies both views.');
                 break;
             case 6:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, [4, 3]);
-                drawLine(xA, yAp, b1pX, yAp, cfg.fvColor, 1.0, [4, 3]);
-                drawArc(xA, yAp, L_FV, 0, 60, cfg.arcColor, 1.0, [3, 3]);
-                drawArc(xA, yA, L_TV, -60, 0, cfg.arcColor, 1.0, [3, 3]);
+                drawLine(xA, yA, b1X, yA, cfg.tvColor, 1.0, []);
+                drawLine(xA, yAp, b1pX, yAp, cfg.fvColor, 1.0, []);
+                drawArc(xA, yAp, L_FV, 0, 60, cfg.arcColor, 1.0, []);
+                drawArc(xA, yA, L_TV, -60, 0, cfg.arcColor, 1.0, []);
                 updateInstructions('Step 6', 'Find consistent projector',
                     `The projector of B is where both arcs and projector alignment are consistent`,
                     'In this problem without Δx, we need additional geometric reasoning. ' +
@@ -252,7 +252,7 @@ registerProc('PROC-14', {
             case 7: {
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
                 const rotX = xA + TL_est;
-                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                drawLine(xA, yAp, rotX, yAp, cfg.dimColor, 0.8, []);
                 drawDimension(xA, yAp, rotX, yAp, `TL≈${TL_est.toFixed(1)}mm`);
                 updateInstructions('Step 7', 'Determine TL',
                     `TL ≈ ${TL_est.toFixed(1)}mm`,
@@ -322,7 +322,7 @@ registerProc('PROC-15', {
                 break;
             case 2:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, xA + 60 * Math.cos(aRad), yA - 60 * Math.sin(aRad), cfg.tvColor, 0.8, [4, 3]);
+                drawLine(xA, yA, xA + 60 * Math.cos(aRad), yA - 60 * Math.sin(aRad), cfg.tvColor, 0.8, []);
                 drawAngleArc(xA, yA, tvAngle, 14, cfg.tvColor, 'down');
                 drawLabel('α', xA + 18, yA - 5, cfg.tvColor);
                 updateInstructions('Step 2', 'Draw TV direction at angle α',
@@ -331,8 +331,8 @@ registerProc('PROC-15', {
                 break;
             case 3:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, xA + 60 * Math.cos(aRad), yA - 60 * Math.sin(aRad), cfg.tvColor, 0.8, [4, 3]);
-                drawLine(xA, yAp, xA + 60 * Math.cos(bRad), yAp + 60 * Math.sin(bRad), cfg.fvColor, 0.8, [4, 3]);
+                drawLine(xA, yA, xA + 60 * Math.cos(aRad), yA - 60 * Math.sin(aRad), cfg.tvColor, 0.8, []);
+                drawLine(xA, yAp, xA + 60 * Math.cos(bRad), yAp + 60 * Math.sin(bRad), cfg.fvColor, 0.8, []);
                 drawAngleArc(xA, yA, tvAngle, 14, cfg.tvColor, 'down');
                 drawAngleArc(xA, yAp, fvAngle, 14, cfg.fvColor, 'up');
                 drawLabel('α', xA + 18, yA - 5, cfg.tvColor);
@@ -343,19 +343,19 @@ registerProc('PROC-15', {
                 break;
             case 4:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, xA + 60 * Math.cos(aRad), yA - 60 * Math.sin(aRad), cfg.tvColor, 0.8, [4, 3]);
-                drawLine(xA, yAp, xA + 60 * Math.cos(bRad), yAp + 60 * Math.sin(bRad), cfg.fvColor, 0.8, [4, 3]);
-                drawArc(xA, yA, TL, -90, 0, cfg.arcColor, 1.0, [3, 3]);
+                drawLine(xA, yA, xA + 60 * Math.cos(aRad), yA - 60 * Math.sin(aRad), cfg.tvColor, 0.8, []);
+                drawLine(xA, yAp, xA + 60 * Math.cos(bRad), yAp + 60 * Math.sin(bRad), cfg.fvColor, 0.8, []);
+                drawArc(xA, yA, TL, -90, 0, cfg.arcColor, 1.0, []);
                 updateInstructions('Step 4', 'Swing TL arc from a (TV side)',
                     `Arc centre a, radius = TL = ${TL}mm`,
                     'Where this arc intersects the TV direction line gives us b. But we need both views to be consistent (same projector).');
                 break;
             case 5:
                 drawXYLine(); Draw.baseA(xA, yA, yAp);
-                drawLine(xA, yA, xA + 60 * Math.cos(aRad), yA - 60 * Math.sin(aRad), cfg.tvColor, 0.8, [4, 3]);
-                drawLine(xA, yAp, xA + 60 * Math.cos(bRad), yAp + 60 * Math.sin(bRad), cfg.fvColor, 0.8, [4, 3]);
-                drawArc(xA, yA, TL, -90, 0, cfg.arcColor, 1.0, [3, 3]);
-                drawArc(xA, yAp, TL, 0, 90, cfg.arcColor, 1.0, [3, 3]);
+                drawLine(xA, yA, xA + 60 * Math.cos(aRad), yA - 60 * Math.sin(aRad), cfg.tvColor, 0.8, []);
+                drawLine(xA, yAp, xA + 60 * Math.cos(bRad), yAp + 60 * Math.sin(bRad), cfg.fvColor, 0.8, []);
+                drawArc(xA, yA, TL, -90, 0, cfg.arcColor, 1.0, []);
+                drawArc(xA, yAp, TL, 0, 90, cfg.arcColor, 1.0, []);
                 updateInstructions('Step 5', 'Swing TL arc from a\' (FV side)',
                     `Arc centre a', radius = TL = ${TL}mm`,
                     'Where this arc intersects the FV direction line gives us b\'. Both b and b\' must share the same projector (vertical line).');
@@ -375,10 +375,10 @@ registerProc('PROC-15', {
                 // Locus from TV: swing L_TV from TL arc on TV direction → b
                 // Locus from FV: swing L_FV from TL arc on FV direction → b'
                 // For display, show construction lines
-                drawLine(xA, yA, xA + TL * cosA, yA - TL * sinA, cfg.tvColor, 0.8, [4, 3]);
-                drawLine(xA, yAp, xA + TL * cosB, yAp + TL * sinB, cfg.fvColor, 0.8, [4, 3]);
-                drawArc(xA, yA, TL, -90, 0, cfg.arcColor, 1.0, [3, 3]);
-                drawArc(xA, yAp, TL, 0, 90, cfg.arcColor, 1.0, [3, 3]);
+                drawLine(xA, yA, xA + TL * cosA, yA - TL * sinA, cfg.tvColor, 0.8, []);
+                drawLine(xA, yAp, xA + TL * cosB, yAp + TL * sinB, cfg.fvColor, 0.8, []);
+                drawArc(xA, yA, TL, -90, 0, cfg.arcColor, 1.0, []);
+                drawArc(xA, yAp, TL, 0, 90, cfg.arcColor, 1.0, []);
 
                 updateInstructions('Step 6', 'Find intersection points',
                     `b and b' where direction lines meet consistent projector`,

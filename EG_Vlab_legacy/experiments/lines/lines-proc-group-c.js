@@ -87,8 +87,8 @@ registerProc('PROC-09', {
                 drawLine(xA, yAp, bpX, bpY, cfg.fvColor, cfg.finalWidth);
                 drawProjector(bX, bY, bpY + 5);
                 // Rotation arc to find TL
-                drawArc(xA, yAp, TL, 0, theta + 5, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xA, yAp, tlArcX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                drawArc(xA, yAp, TL, 0, theta + 5, cfg.arcColor, 1.0, []);
+                drawLine(xA, yAp, tlArcX, yAp, cfg.dimColor, 0.8, []);
                 drawPoint(tlArcX, yAp, cfg.dimColor, 3); drawLabel('TL', tlArcX, yAp, cfg.dimColor, { dx: 6, dy: 0 });
                 drawPoint(bpX, bpY, cfg.fvColor); drawLabel("b'", bpX, bpY, cfg.fvColor, { dx: 6, dy: 0 });
                 drawAngleArc(xA, yAp, theta, 14, cfg.dimColor, 'up');
@@ -221,8 +221,8 @@ registerProc('PROC-10', {
                 drawLine(xA, yAp, bpX, bpY, cfg.fvColor, cfg.finalWidth);
                 drawLine(xA, yA, bX, bY, cfg.tvColor, cfg.finalWidth);
                 drawProjector(bpX, bpY, bY - 5);
-                drawArc(xA, yA, TL, -phi - 5, 0, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xA, yA, tlArcX, yA, cfg.dimColor, 0.8, [2, 3]);
+                drawArc(xA, yA, TL, -phi - 5, 0, cfg.arcColor, 1.0, []);
+                drawLine(xA, yA, tlArcX, yA, cfg.dimColor, 0.8, []);
                 drawPoint(tlArcX, yA, cfg.dimColor, 3); drawLabel('TL', tlArcX, yA, cfg.dimColor, { dx: 6, dy: 0 });
                 drawAngleArc(xA, yA, phi, 14, cfg.dimColor, 'down');
                 updateInstructions('Step 5', 'Find True Length by Rotation',
@@ -346,8 +346,8 @@ registerProc('PROC-11', {
                 drawLine(xA, yA, bX, bY, cfg.tvColor, cfg.finalWidth);
                 drawLine(xA, yAp, bpX, bpY, cfg.fvColor, cfg.finalWidth);
                 drawProjector(bX, bY, bpY + 5);
-                drawArc(xA, yAp, TL, 0, theta + 5, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xA, yAp, tlArcX, yAp, cfg.dimColor, 0.8, [2, 3]);
+                drawArc(xA, yAp, TL, 0, theta + 5, cfg.arcColor, 1.0, []);
+                drawLine(xA, yAp, tlArcX, yAp, cfg.dimColor, 0.8, []);
                 drawPoint(tlArcX, yAp, cfg.dimColor, 3); drawLabel(`TL=${TL.toFixed(1)}`, tlArcX, yAp, cfg.dimColor, { dx: 6, dy: 0 });
                 drawPoint(bpX, bpY, cfg.fvColor); drawLabel("b'", bpX, bpY, cfg.fvColor, { dx: 6, dy: 0 });
                 drawAngleArc(xA, yAp, theta, 14, cfg.dimColor, 'up');
@@ -449,8 +449,8 @@ registerProc('PROC-12', {
                 drawLine(xA, yAp, bpX, bpY, cfg.fvColor, cfg.finalWidth);
                 drawLine(xA, yA, bX, bY, cfg.tvColor, cfg.finalWidth);
                 drawProjector(bpX, bpY, bY - 5);
-                drawArc(xA, yA, TL, -phi - 5, 0, cfg.arcColor, 1.0, [3, 3]);
-                drawLine(xA, yA, tlArcX, yA, cfg.dimColor, 0.8, [2, 3]);
+                drawArc(xA, yA, TL, -phi - 5, 0, cfg.arcColor, 1.0, []);
+                drawLine(xA, yA, tlArcX, yA, cfg.dimColor, 0.8, []);
                 drawPoint(tlArcX, yA, cfg.dimColor, 3); drawLabel(`TL=${TL.toFixed(1)}`, tlArcX, yA, cfg.dimColor, { dx: 6, dy: 0 });
                 drawAngleArc(xA, yA, phi, 14, cfg.dimColor, 'down');
                 updateInstructions('Step 5', 'Verify TL by Rotation',
