@@ -1,0 +1,590 @@
+/* ========================================
+   Global Styles & Reset
+   ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color Palette */
+    --primary-color: #2563eb;
+    --primary-dark: #1e40af;
+    --primary-light: #3b82f6;
+    --secondary-color: #64748b;
+    --success-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    
+    /* Neutral Colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --border-color: #e2e8f0;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    /* Canvas Colors */
+    --canvas-bg: #fafafa;
+    --xy-line-color: #1e293b;
+    --visible-edge: #0f172a;
+    --hidden-edge: #64748b;
+    --construction-line: #cbd5e1;
+    
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    
+    /* Typography */
+    --font-primary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'Courier New', Courier, monospace;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    
+    /* Border Radius */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    
+    /* Transitions */
+    --transition-fast: 150ms ease-in-out;
+    --transition-normal: 250ms ease-in-out;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========================================
+   Header
+   ======================================== */
+.header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: var(--space-lg) var(--space-xl);
+    box-shadow: var(--shadow-md);
+    z-index: 100;
+}
+
+.header-content h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+    letter-spacing: -0.025em;
+}
+
+.subtitle {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+/* ========================================
+   Main Container Layout
+   ======================================== */
+.main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 140px); /* Adjusted for header and footer */
+}
+
+/* ========================================
+   Left Input Panel (17% width)
+   ======================================== */
+.input-panel {
+    width: 17%;
+    background-color: var(--bg-primary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-shadow: var(--shadow-sm);
+}
+
+.panel-header {
+    background-color: var(--bg-tertiary);
+    padding: var(--space-lg);
+    border-bottom: 2px solid var(--primary-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.panel-header h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.input-section {
+    padding: var(--space-lg);
+    flex: 1;
+}
+
+/* ========================================
+   Input Groups
+   ======================================== */
+.input-group {
+    margin-bottom: var(--space-lg);
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.input-field {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-family: var(--font-primary);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.input-field:hover {
+    border-color: var(--secondary-color);
+}
+
+.dynamic-inputs {
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--space-lg);
+    margin-top: var(--space-lg);
+}
+
+#caseSpecificInputs .input-group {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========================================
+   Buttons
+   ======================================== */
+.button-group {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-lg);
+}
+
+.btn {
+    flex: 1;
+    padding: var(--space-md);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--border-color);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ========================================
+   Info Box
+   ======================================== */
+.info-box {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-top: var(--space-lg);
+}
+
+.info-box h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+}
+
+.info-box ul {
+    list-style: none;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.info-box li {
+    padding: var(--space-xs) 0;
+    line-height: 1.5;
+}
+
+.info-box strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* ========================================
+   Canvas Area (83% width)
+   ======================================== */
+.canvas-area {
+    width: 83%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-secondary);
+    overflow: hidden;
+}
+
+/* ========================================
+   Canvas Controls
+   ======================================== */
+.canvas-controls {
+    background-color: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--space-md) var(--space-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.control-group,
+.step-controls {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.control-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.control-btn:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.control-btn:active {
+    transform: scale(0.98);
+}
+
+.control-btn svg {
+    flex-shrink: 0;
+}
+
+.step-indicator {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 0 var(--space-md);
+}
+
+/* ========================================
+   Instruction Panel (10% height of canvas area)
+   ======================================== */
+.instruction-panel {
+    background: linear-gradient(to right, #eff6ff, #dbeafe);
+    border-bottom: 2px solid var(--primary-color);
+    padding: var(--space-lg) var(--space-xl);
+    max-height: 10%;
+    overflow-y: auto;
+}
+
+.instruction-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    margin-bottom: var(--space-sm);
+}
+
+.instruction-content p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+/* ========================================
+   Canvas Container
+   ======================================== */
+.canvas-container {
+    flex: 1;
+    background-color: var(--canvas-bg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#drawingCanvas {
+    display: block;
+    background-color: white;
+    box-shadow: var(--shadow-lg);
+    cursor: crosshair;
+    border-radius: var(--radius-sm);
+}
+
+/* ========================================
+   Footer
+   ======================================== */
+.footer {
+    background-color: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    padding: var(--space-md) var(--space-xl);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+/* ========================================
+   Scrollbar Styling
+   ======================================== */
+.input-panel::-webkit-scrollbar,
+.instruction-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.input-panel::-webkit-scrollbar-track,
+.instruction-panel::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+.input-panel::-webkit-scrollbar-thumb,
+.instruction-panel::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.input-panel::-webkit-scrollbar-thumb:hover,
+.instruction-panel::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+}
+
+/* ========================================
+   Responsive Adjustments
+   ======================================== */
+@media (max-width: 1200px) {
+    .input-panel {
+        width: 20%;
+    }
+    
+    .canvas-area {
+        width: 80%;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+    
+    .input-panel {
+        width: 100%;
+        max-height: 40%;
+    }
+    
+    .canvas-area {
+        width: 100%;
+        flex: 1;
+    }
+    
+    .control-btn span {
+        display: none;
+    }
+}
+
+/* ========================================
+   Loading State
+   ======================================== */
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.spinner {
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+.hidden {
+    display: none !important;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+
+/* ========================================
+   Sections of Solids – UI Additions
+   ======================================== */
+.section-toggle-row {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 2px dashed var(--border-color);
+}
+
+.sec-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+}
+
+.sec-toggle-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #e11d48;
+    cursor: pointer;
+}
+
+.sec-toggle-text {
+    color: #be123c;
+}
+
+.sectioning-panel {
+    margin-top: var(--space-md);
+    background: #fff1f2;
+    border: 1px solid #fecdd3;
+    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+}
+
+.sec-panel-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #be123c;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-md);
+}
+
+.sec-info-box {
+    background: #ffe4e6;
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.72rem;
+    color: #881337;
+    line-height: 1.5;
+    margin-top: var(--space-md);
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+@media print {
+    .header,
+    .footer,
+    .input-panel,
+    .canvas-controls {
+        display: none;
+    }
+    
+    .canvas-area {
+        width: 100%;
+    }
+    
+    #drawingCanvas {
+        box-shadow: none;
+    }
+}
